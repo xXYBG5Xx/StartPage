@@ -1,747 +1,1142 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Startpage - صفحة البداية</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f3ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            900: '#0f172a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts: Vazirmatn -->
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Startpage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --bg-color: #0d0e15;
+            --card-bg: rgba(22, 25, 38, 0.65);
+            --card-hover: rgba(35, 40, 60, 0.85);
+            --search-bg: rgba(26, 29, 45, 0.85);
+            --search-focus-bg: #161824;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.18);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-color: #6366f1;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
+
+            --bm-size: 96px;
+            --bm-icon-size: 32px;
+            --bm-font-size: 0.78rem;
+        }
+
+        body.light-theme {
+            --bg-color: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --card-hover: rgba(241, 245, 249, 0.9);
+            --search-bg: rgba(255, 255, 255, 0.85);
+            --search-focus-bg: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-highlight: rgba(0, 0, 0, 0.15);
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        body.bm-small {
+            --bm-size: 72px;
+            --bm-icon-size: 24px;
+            --bm-font-size: 0.7rem;
+        }
+
+        body.bm-medium {
+            --bm-size: 96px;
+            --bm-icon-size: 32px;
+            --bm-font-size: 0.78rem;
+        }
+
+        body.bm-large {
+            --bm-size: 120px;
+            --bm-icon-size: 40px;
+            --bm-font-size: 0.9rem;
+        }
+
         * {
-            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                        background-color 0.3s ease,
-                        border-color 0.3s ease;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Default Dark Gradient Background from image */
-        .bg-custom-gradient {
-            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
-        }
-        .light .bg-custom-gradient {
-            background: radial-gradient(circle at center, #f1f5f9 0%, #e2e8f0 100%);
+        body {
+            height: 100vh;
+            width: 100vw;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0d0e15 70%);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+            transition: background 0.4s ease, color 0.4s ease;
         }
 
-        /* Focus Dimming Effect */
-        body.search-focused .dimmable-element {
+        body.light-theme {
+            background-image: radial-gradient(circle at 50% 30%, #e0e7ff 0%, #f1f5f9 70%);
+        }
+
+        .ambient-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08), transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .settings-trigger {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .settings-trigger:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text-primary);
+            transform: rotate(45deg);
+            border-color: var(--border-highlight);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .settings-trigger svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .focusable-element {
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.focus-mode .focusable-element {
             opacity: 0 !important;
             pointer-events: none !important;
-            transform: scale(0.96) translateY(8px);
-            filter: blur(4px);
+            transform: scale(0.96);
+            filter: blur(8px);
         }
 
-        /* Search input glowing effect */
-        .search-glow:focus-within {
-            box-shadow: 0 0 25px rgba(99, 102, 241, 0.35);
+        #clock-wrapper {
+            position: absolute;
+            z-index: 10;
+            user-select: none;
+            text-align: center;
+            white-space: nowrap;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
+        #clock {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            line-height: 1;
         }
-        ::-webkit-scrollbar-track {
+
+        #date {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .clock-top-left { top: 40px; left: 40px; transform: none; }
+        .clock-top-center { top: 40px; left: 50%; transform: translateX(-50%); }
+        .clock-top-right { top: 40px; right: 100px; transform: none; }
+
+        .search-wrapper {
+            position: absolute;
+            width: 90%;
+            max-width: 620px;
+            z-index: 30;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-pos-top-center { top: 220px; left: 50%; transform: translateX(-50%); }
+        .search-pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        body.focus-mode .search-wrapper {
+            top: 40% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(1.03) !important;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            background: var(--search-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            padding: 6px 18px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            background: var(--search-focus-bg);
+            border-color: var(--border-highlight);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .search-icon-left {
+            width: 22px;
+            height: 22px;
+            fill: var(--text-secondary);
+            margin-left: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: fill 0.3s ease;
+        }
+
+        .search-box:focus-within .search-icon-left {
+            fill: var(--accent-color);
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            padding: 12px 0;
+            width: 100%;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .suggestions-card {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: var(--search-focus-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 40;
+        }
+
+        .suggestions-card.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+            gap: 14px;
+            color: var(--text-primary);
+            font-size: 0.98rem;
+        }
+
+        .suggestion-item:hover, .suggestion-item.selected {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .suggestion-icon {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .bookmarks-section {
+            position: absolute;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            z-index: 20;
+            transition: all 0.4s ease;
+        }
+
+        .bm-pos-bottom {
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bm-pos-center-below {
+            top: calc(50% + 110px);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bookmark-card {
+            position: relative;
+            width: var(--bm-size);
+            height: var(--bm-size);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .bookmark-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-highlight);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .bookmark-icon {
+            width: var(--bm-icon-size);
+            height: var(--bm-icon-size);
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .bookmark-title {
+            font-size: var(--bm-font-size);
+            color: var(--text-primary);
+            width: 85%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+
+        .bookmark-add-btn {
+            border: 2px dashed var(--border-highlight);
             background: transparent;
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.3);
-            border-radius: 9999px;
+
+        .bookmark-add-btn:hover {
+            border-color: var(--accent-color);
+            background: rgba(99, 102, 241, 0.1);
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(156, 163, 175, 0.5);
+
+        .bookmark-add-icon {
+            width: var(--bm-icon-size);
+            height: var(--bm-icon-size);
+            fill: var(--text-secondary);
+            transition: fill 0.3s ease;
+        }
+
+        .bookmark-add-btn:hover .bookmark-add-icon {
+            fill: var(--accent-color);
+        }
+
+        .bookmark-delete {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .bookmark-card:hover .bookmark-delete {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-body {
+            background: var(--search-focus-bg);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 480px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.92) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-primary);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-body {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        select.form-control option {
+            background: var(--bg-color);
+            color: var(--text-primary);
+        }
+
+        .format-guide {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .format-guide code {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
-<body id="mainBody" class="min-h-screen w-full relative overflow-x-hidden bg-custom-gradient text-slate-100 dark:text-slate-100 flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<body>
+    <div class="ambient-bg"></div>
 
-    <!-- Top Settings Bar -->
-    <header class="fixed top-0 left-0 right-0 p-4 z-40 flex justify-between items-center pointer-events-none">
-        <div class="flex items-center gap-2 pointer-events-auto">
-            <!-- Dynamic Widgets placement wrapper will handle positioning -->
-        </div>
-        
-        <!-- Settings Gear Button -->
-        <button id="openSettingsBtn" onclick="toggleModal('settingsModal', true)" 
-                class="dimmable-element pointer-events-auto p-3 rounded-2xl bg-slate-900/40 hover:bg-slate-800/60 dark:bg-slate-800/40 dark:hover:bg-slate-700/60 backdrop-blur-md border border-white/10 text-slate-200 shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer"
-                title="الإعدادات">
-            <i data-lucide="settings" class="w-6 h-6"></i>
-        </button>
-    </header>
+    <button class="settings-trigger focusable-element" onclick="openModal('settingsModal')" title="الإعدادات">
+        <svg viewBox="0 0 24 24">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+        </svg>
+    </button>
 
-    <!-- Clock & Date Floating Container -->
-    <div id="clockContainer" class="dimmable-element absolute z-20 flex flex-col items-center justify-center transition-all duration-500">
-        <div id="clockTime" class="font-bold tracking-tight text-slate-100 dark:text-slate-100 drop-shadow-md"></div>
-        <div id="clockDate" class="text-slate-300 dark:text-slate-300 font-medium drop-shadow opacity-90"></div>
+    <div id="clock-wrapper" class="focusable-element clock-top-center">
+        <div id="clock">--:--:--</div>
+        <div id="date">----/--/--</div>
     </div>
 
-    <!-- Search Bar Wrapper -->
-    <main id="searchWrapper" class="absolute z-30 w-full max-w-2xl px-4 transition-all duration-500 left-1/2 -translate-x-1/2">
-        <form id="searchForm" onsubmit="handleSearch(event)" class="w-full">
-            <div class="relative search-glow rounded-full bg-slate-900/60 dark:bg-slate-900/70 border border-white/15 dark:border-white/10 backdrop-blur-xl shadow-2xl transition-all duration-300">
-                <input type="text" id="searchInput" 
-                       placeholder="ابحث أو أدخل رابطاً..." 
-                       autocomplete="off"
-                       class="w-full py-4 pr-6 pl-14 text-lg bg-transparent text-white placeholder-slate-400 dark:placeholder-slate-400 rounded-full focus:outline-none"
-                       onfocus="setSearchFocus(true)"
-                       onblur="setSearchFocus(false)">
-                <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full text-indigo-400 hover:text-indigo-300 hover:bg-white/5 transition-all">
-                    <i data-lucide="search" class="w-6 h-6"></i>
-                </button>
+    <div class="search-wrapper search-pos-center" id="searchWrapper">
+        <div class="search-box">
+            <div class="search-icon-left">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
             </div>
-        </form>
-    </main>
-
-    <!-- Shortcuts / Favorites Container -->
-    <div id="shortcutsContainer" class="dimmable-element absolute z-20 left-1/2 -translate-x-1/2 transition-all duration-500 w-full max-w-4xl px-4 flex flex-wrap justify-center gap-4">
-        <!-- Rendered dynamically -->
+            <input type="text" class="search-input" id="searchInput" placeholder="ابحث أو أدخل رابطاً..." autocomplete="off">
+        </div>
+        <div class="suggestions-card" id="suggestionsCard"></div>
     </div>
+
+    <div class="bookmarks-section focusable-element bm-pos-bottom" id="bookmarksContainer"></div>
 
     <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-slate-900/90 border border-white/10 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-slate-100">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="sliders" class="w-6 h-6 text-indigo-400"></i>
-                    <h2 class="text-xl font-bold">إعدادات الصفحة</h2>
-                </div>
-                <button onclick="toggleModal('settingsModal', false)" class="p-2 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h3 class="modal-title">الإعدادات</h3>
+                <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
             </div>
 
-            <!-- Modal Body (Scrollable) -->
-            <div class="p-6 overflow-y-auto space-y-6">
-                
-                <!-- Search Engine Selection -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-300">محرك البحث الافتراضي</label>
-                    <select id="settingEngine" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
-                        <option value="https://www.google.com/search?q=">Google</option>
-                        <option value="https://www.bing.com/search?q=">Bing</option>
-                        <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
-                        <option value="https://search.brave.com/search?q=">Brave</option>
-                    </select>
-                </div>
-
-                <!-- Clock & Date Controls -->
-                <div class="p-4 bg-white/5 rounded-2xl space-y-4 border border-white/5">
-                    <h3 class="text-md font-bold text-indigo-400 flex items-center gap-2">
-                        <i data-lucide="clock" class="w-5 h-5"></i>
-                        الوقت والتاريخ
-                    </h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- System Format -->
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">تنسيق الوقت (نظام)</label>
-                            <select id="settingClockSystem" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                                <option value="12">12 ساعة</option>
-                                <option value="24">24 ساعة</option>
-                            </select>
-                        </div>
-
-                        <!-- Clock Location -->
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">موقع الوقت والتاريخ</label>
-                            <select id="settingClockPos" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                                <option value="top-center">أعلى المنتصف</option>
-                                <option value="center">المنتصف</option>
-                                <option value="top-right">أعلى اليمين</option>
-                                <option value="top-left">أعلى اليسار</option>
-                            </select>
-                        </div>
-
-                        <!-- Date Windows Format -->
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">تنسيق التاريخ (رموز ويندوز)</label>
-                            <select id="settingDateFormat" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                                <option value="dd - MM - yyyy">dd - MM - yyyy</option>
-                                <option value="dddd, MMMM d, yyyy">dddd, MMMM d, yyyy</option>
-                                <option value="yyyy/MM/dd">yyyy/MM/dd</option>
-                            </select>
-                        </div>
-
-                        <!-- Time Windows Format -->
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">تنسيق الوقت (رموز ويندوز)</label>
-                            <select id="settingTimeFormat" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                                <option value="h:mm tt">h:mm tt</option>
-                                <option value="h:mm:ss tt">h:mm:ss tt</option>
-                                <option value="HH:mm">HH:mm</option>
-                                <option value="HH:mm:ss">HH:mm:ss</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Visibility Options -->
-                    <div class="flex flex-wrap gap-4 pt-2">
-                        <label class="flex items-center gap-2 cursor-pointer text-sm">
-                            <input type="checkbox" id="settingShowClock" onchange="updateSettings()" class="rounded border-white/20 bg-slate-800 text-indigo-600 focus:ring-0">
-                            إظهار الوقت
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-sm">
-                            <input type="checkbox" id="settingShowDate" onchange="updateSettings()" class="rounded border-white/20 bg-slate-800 text-indigo-600 focus:ring-0">
-                            إظهار التاريخ
-                        </label>
-                    </div>
-
-                    <!-- Format Guide Explanation Box -->
-                    <div class="p-3 bg-indigo-950/40 border border-indigo-500/20 rounded-xl text-xs text-indigo-200/80 space-y-1">
-                        <span class="font-bold text-indigo-300 block mb-1">دليل رموز التنسيق القياسية:</span>
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1">
-                            <div><code class="text-indigo-400">h</code> : ساعات (1-12)</div>
-                            <div><code class="text-indigo-400">HH</code> : ساعات (00-23)</div>
-                            <div><code class="text-indigo-400">mm</code> : دقائق</div>
-                            <div><code class="text-indigo-400">ss</code> : ثوانٍ</div>
-                            <div><code class="text-indigo-400">tt</code> : AM/PM</div>
-                            <div><code class="text-indigo-400">d/dd</code> : اليوم برقم/برقمين</div>
-                            <div><code class="text-indigo-400">dddd</code> : اسم اليوم</div>
-                            <div><code class="text-indigo-400">MM/MMMM</code> : الشهر رقم/اسم</div>
-                            <div><code class="text-indigo-400">yyyy</code> : السنة كاملة</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Custom Background -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-300">خلفية مخصصة من الجهاز</label>
-                    <div class="flex gap-2">
-                        <input type="file" id="bgFileInput" accept="image/*" class="hidden" onchange="handleBgUpload(event)">
-                        <button onclick="document.getElementById('bgFileInput').click()" class="flex-1 bg-slate-800 border border-white/10 rounded-xl px-4 py-2.5 text-sm hover:bg-slate-700 transition flex items-center justify-center gap-2">
-                            <i data-lucide="image" class="w-4 h-4"></i>
-                            اختر صورة...
-                        </button>
-                        <button id="removeBgBtn" onclick="removeBackground()" class="hidden bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-xl px-4 py-2.5 text-sm hover:bg-rose-500/30 transition">
-                            إزالة
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Search Bar Position -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-300">موقع شريط البحث</label>
-                    <select id="settingSearchPos" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
-                        <option value="center">المنتصف</option>
-                        <option value="top">أعلى المنتصف</option>
-                    </select>
-                </div>
-
-                <!-- Shortcuts Settings -->
-                <div class="p-4 bg-white/5 rounded-2xl space-y-4 border border-white/5">
-                    <h3 class="text-md font-bold text-indigo-400 flex items-center gap-2">
-                        <i data-lucide="bookmark" class="w-5 h-5"></i>
-                        الصفحات المفضلة
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">الموقع</label>
-                            <select id="settingShortcutsPos" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                                <option value="bottom">منتصف أسفل</option>
-                                <option value="center">منتصف</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">الحجم</label>
-                            <select id="settingShortcutsSize" onchange="updateSettings()" class="w-full bg-slate-800 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                                <option value="sm">صغير</option>
-                                <option value="md">متوسط</option>
-                                <option value="lg">كبير</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Theme / Appearance Mode -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-300">المظهر</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="setTheme('dark')" id="themeDarkBtn" class="p-3 rounded-xl border border-white/10 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700">
-                            <i data-lucide="moon" class="w-4 h-4"></i>
-                            داكن (Dark)
-                        </button>
-                        <button onclick="setTheme('light')" id="themeLightBtn" class="p-3 rounded-xl border border-white/10 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700">
-                            <i data-lucide="sun" class="w-4 h-4"></i>
-                            مضيء (Light)
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Backup & Restore -->
-                <div class="pt-4 border-t border-white/10 flex flex-wrap gap-3">
-                    <button onclick="exportData()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-xl p-3 text-xs font-semibold flex items-center justify-center gap-2">
-                        <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
-                        تصدير النسخة الاحتياطية
-                    </button>
-                    <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importData(event)">
-                    <button onclick="document.getElementById('importFileInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-xl p-3 text-xs font-semibold flex items-center justify-center gap-2">
-                        <i data-lucide="upload" class="w-4 h-4 text-amber-400"></i>
-                        استيراد نسخة احتياطية
-                    </button>
-                </div>
-
+            <div class="form-group">
+                <label class="form-label">محرك البحث الإفتراضي:</label>
+                <select class="form-control" id="searchEngineSelect">
+                    <option value="google">Google</option>
+                    <option value="bing">Bing</option>
+                    <option value="duckduckgo">DuckDuckGo</option>
+                    <option value="brave">Brave</option>
+                </select>
             </div>
+
+            <div class="form-group">
+                <label class="form-label">عرض / إخفاء العناصر:</label>
+                <select class="form-control" id="clockDisplaySelect">
+                    <option value="both">إظهار الوقت والتاريخ</option>
+                    <option value="time-only">إظهار الوقت فقط</option>
+                    <option value="date-only">إظهار التاريخ فقط</option>
+                    <option value="none">إخفاء كلاهما</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">تنسيق الوقت المخصص:</label>
+                <input type="text" class="form-control" id="timeFormatInput" placeholder="مثال: h:mm:ss tt">
+                <div class="format-guide">
+                    شرح رموزه:<br>
+                    <code>h</code> : الساعة (1-12) | <code>hh</code> : الساعة بصفين (01-12)<br>
+                    <code>H</code> : الساعة (0-23) | <code>HH</code> : الساعة بصفين (00-23)<br>
+                    <code>m</code> / <code>mm</code> : الدقائق | <code>s</code> / <code>ss</code> : الثواني<br>
+                    <code>tt</code> : صباحاً / مساءً (AM/PM)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">تنسيق التاريخ المخصص:</label>
+                <input type="text" class="form-control" id="dateFormatInput" placeholder="مثال: dddd, MMMM d, yyyy">
+                <div class="format-guide">
+                    شرح رموزه:<br>
+                    <code>dd</code> : اليوم (01-31) | <code>dddd</code> : اسم اليوم (الإثنين...)<br>
+                    <code>MM</code> : رقم الشهر | <code>MMMM</code> : اسم الشهر (يناير...)<br>
+                    <code>yyyy</code> : السنة (2026)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">موقع الساعة والتاريخ:</label>
+                <select class="form-control" id="clockPosSelect">
+                    <option value="clock-top-left">أعلى اليسار</option>
+                    <option value="clock-top-center">أعلى الوسط</option>
+                    <option value="clock-top-right">أعلى اليمين</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">موقع شريط البحث:</label>
+                <select class="form-control" id="searchPosSelect">
+                    <option value="search-pos-top-center">المنتصف الأعلى</option>
+                    <option value="search-pos-center">في المنتصف</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">موقع الصفحات المفضلة:</label>
+                <select class="form-control" id="bookmarkPosSelect">
+                    <option value="bm-pos-bottom">أسفل الصفحة</option>
+                    <option value="bm-pos-center-below">تحت المنتصف (تحت البحث)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">حجم الصفحات المفضلة:</label>
+                <select class="form-control" id="bookmarkSizeSelect">
+                    <option value="bm-small">صغير (Small)</option>
+                    <option value="bm-medium">متوسط (Medium)</option>
+                    <option value="bm-large">كبير (Large)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">خلفية المظهر:</label>
+                <input type="file" class="form-control" id="bgInput" accept="image/*">
+                <button class="btn-secondary" onclick="resetBg()">إزالة الخلفية المخصصة</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">المظهر (Theme):</label>
+                <select class="form-control" id="themeSelect">
+                    <option value="dark">داكن (Dark)</option>
+                    <option value="light">مضيء (Light)</option>
+                </select>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+            <div class="form-group">
+                <label class="form-label">النسخ الاحتياطي والإعدادات:</label>
+                <button class="btn-secondary" onclick="exportData()">تصدير الإعدادات والمفضلات (JSON)</button>
+                <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importData(event)">
+                <button class="btn-secondary" onclick="document.getElementById('importInput').click()">استيراد البيانات</button>
+            </div>
+
+            <button class="btn-primary" onclick="closeModal('settingsModal')">حفظ وإغلاق</button>
         </div>
     </div>
 
-    <!-- Add Favorite Shortcut Modal -->
-    <div id="addShortcutModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-slate-900 border border-white/10 w-full max-w-md rounded-3xl p-6 shadow-2xl text-slate-100 space-y-4">
-            <h3 class="text-lg font-bold">إضافة موقع جديد</h3>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">عنوان الموقع</label>
-                <input type="text" id="shortcutTitle" placeholder="مثال: GitHub" class="w-full bg-slate-800 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+    <!-- Add Site Modal -->
+    <div class="modal-overlay" id="addSiteModal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h3 class="modal-title">إضافة موقع مفضل</h3>
+                <button class="modal-close" onclick="closeModal('addSiteModal')">&times;</button>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">رابط الموقع (URL)</label>
-                <input type="url" id="shortcutUrl" placeholder="https://example.com" class="w-full bg-slate-800 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+
+            <div class="form-group">
+                <label class="form-label">اسم الموقع:</label>
+                <input type="text" class="form-control" id="siteNameInput" placeholder="مثال: Google">
             </div>
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="toggleModal('addShortcutModal', false)" class="px-4 py-2 rounded-xl hover:bg-white/10 text-slate-400 text-sm">إلغاء</button>
-                <button onclick="saveShortcut()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold">إضافة</button>
+
+            <div class="form-group">
+                <label class="form-label">الرابط (URL):</label>
+                <input type="url" class="form-control" id="siteUrlInput" placeholder="https://www.example.com">
             </div>
+
+            <button class="btn-primary" onclick="handleAddSite()">إضافة الموقع</button>
         </div>
     </div>
 
     <script>
-        // Default Default Data & Configuration
-        const DEFAULT_SHORTCUTS = [
-            { title: 'Google', url: 'https://google.com', icon: 'https://www.google.com/favicon.ico' },
-            { title: 'YouTube', url: 'https://youtube.com', icon: 'https://www.youtube.com/favicon.ico' },
-            { title: 'GitHub', url: 'https://github.com', icon: 'https://github.githubassets.com/favicons/favicon.png' }
-        ];
-
-        const DEFAULT_SETTINGS = {
-            searchEngine: 'https://www.google.com/search?q=',
-            clockSystem: '12',
-            clockPos: 'top-center',
-            timeFormat: 'h:mm tt',
-            dateFormat: 'dd - MM - yyyy',
-            showClock: true,
-            showDate: true,
-            bgImage: '',
-            searchPos: 'center',
-            shortcutsPos: 'bottom',
-            shortcutsSize: 'md',
-            theme: 'dark'
-        };
-
-        let state = {
-            settings: { ...DEFAULT_SETTINGS },
-            shortcuts: [...DEFAULT_SHORTCUTS]
-        };
-
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            loadState();
-            initLucide();
-            startClock();
-            applyState();
-        });
-
-        function initLucide() {
-            if (window.lucide) {
-                lucide.createIcons();
-            }
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
         }
 
-        // Load saved state from LocalStorage
-        function loadState() {
-            const savedSettings = localStorage.getItem('sp_settings');
-            if (savedSettings) {
-                try { state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(savedSettings) }; } catch(e){}
-            }
-            const savedShortcuts = localStorage.getItem('sp_shortcuts');
-            if (savedShortcuts) {
-                try { state.shortcuts = JSON.parse(savedShortcuts); } catch(e){}
-            }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
         }
 
-        function saveState() {
-            localStorage.setItem('sp_settings', JSON.stringify(state.settings));
-            localStorage.setItem('sp_shortcuts', JSON.stringify(state.shortcuts));
+        // --- Custom Date & Time Formatter ---
+        function formatDateTime(date, format) {
+            const daysFull = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            const monthsFull = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+
+            let hours24 = date.getHours();
+            let hours12 = hours24 % 12 || 12;
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            let tt = hours24 >= 12 ? 'مساءً' : 'صباحاً';
+
+            let dayNum = date.getDate();
+            let monthNum = date.getMonth() + 1;
+            let year = date.getFullYear();
+
+            return format
+                .replace(/yyyy/g, year)
+                .replace(/MMMM/g, monthsFull[date.getMonth()])
+                .replace(/MM/g, String(monthNum).padStart(2, '0'))
+                .replace(/dddd/g, daysFull[date.getDay()])
+                .replace(/dd/g, String(dayNum).padStart(2, '0'))
+                .replace(/d/g, dayNum)
+                .replace(/HH/g, String(hours24).padStart(2, '0'))
+                .replace(/H/g, hours24)
+                .replace(/hh/g, String(hours12).padStart(2, '0'))
+                .replace(/h/g, hours12)
+                .replace(/mm/g, String(minutes).padStart(2, '0'))
+                .replace(/m/g, minutes)
+                .replace(/ss/g, String(seconds).padStart(2, '0'))
+                .replace(/s/g, seconds)
+                .replace(/tt/g, tt);
         }
 
-        // Apply visual states based on configuration
-        function applyState() {
-            const { settings } = state;
-
-            // Apply Theme
-            if (settings.theme === 'light') {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
-            } else {
-                document.documentElement.classList.remove('light');
-                document.documentElement.classList.add('dark');
-            }
-
-            // Apply Background
-            const body = document.getElementById('mainBody');
-            const removeBtn = document.getElementById('removeBgBtn');
-            if (settings.bgImage) {
-                body.style.backgroundImage = `url('${settings.bgImage}')`;
-                body.style.backgroundSize = 'cover';
-                body.style.backgroundPosition = 'center';
-                removeBtn.classList.remove('hidden');
-            } else {
-                body.style.backgroundImage = '';
-                removeBtn.classList.add('hidden');
-            }
-
-            // Apply Clock Visibility & Positioning
-            const clockContainer = document.getElementById('clockContainer');
-            clockContainer.style.display = (settings.showClock || settings.showDate) ? 'flex' : 'none';
-
-            // Clock Positions
-            clockContainer.className = 'dimmable-element absolute z-20 flex flex-col items-center justify-center transition-all duration-500';
-            switch (settings.clockPos) {
-                case 'top-center':
-                    clockContainer.style.top = '10%';
-                    clockContainer.style.left = '50%';
-                    clockContainer.style.transform = 'translateX(-50%)';
-                    break;
-                case 'center':
-                    clockContainer.style.top = '35%';
-                    clockContainer.style.left = '50%';
-                    clockContainer.style.transform = 'translate(-50%, -50%)';
-                    break;
-                case 'top-right':
-                    clockContainer.style.top = '5%';
-                    clockContainer.style.right = '5%';
-                    clockContainer.style.left = 'auto';
-                    clockContainer.style.transform = 'none';
-                    break;
-                case 'top-left':
-                    clockContainer.style.top = '5%';
-                    clockContainer.style.left = '5%';
-                    clockContainer.style.right = 'auto';
-                    clockContainer.style.transform = 'none';
-                    break;
-            }
-
-            // Search Bar Positioning
-            const searchWrapper = document.getElementById('searchWrapper');
-            if (settings.searchPos === 'center') {
-                searchWrapper.style.top = '50%';
-                searchWrapper.style.transform = 'translate(-50%, -50%)';
-            } else {
-                searchWrapper.style.top = '28%';
-                searchWrapper.style.transform = 'translateX(-50%)';
-            }
-
-            // Shortcuts Placement & Size
-            renderShortcuts();
-
-            // Modal Input Binding
-            document.getElementById('settingEngine').value = settings.searchEngine;
-            document.getElementById('settingClockSystem').value = settings.clockSystem;
-            document.getElementById('settingClockPos').value = settings.clockPos;
-            document.getElementById('settingDateFormat').value = settings.dateFormat;
-            document.getElementById('settingTimeFormat').value = settings.timeFormat;
-            document.getElementById('settingShowClock').checked = settings.showClock;
-            document.getElementById('settingShowDate').checked = settings.showDate;
-            document.getElementById('settingSearchPos').value = settings.searchPos;
-            document.getElementById('settingShortcutsPos').value = settings.shortcutsPos;
-            document.getElementById('settingShortcutsSize').value = settings.shortcutsSize;
-
-            updateClock();
-        }
-
-        // Render Shortcuts List
-        function renderShortcuts() {
-            const container = document.getElementById('shortcutsContainer');
-            const { shortcutsPos, shortcutsSize } = state.settings;
-
-            // Positioning
-            if (shortcutsPos === 'bottom') {
-                container.style.top = 'auto';
-                container.style.bottom = '12%';
-            } else {
-                container.style.top = '68%';
-                container.style.bottom = 'auto';
-            }
-
-            // Size presets
-            let cardClasses = 'p-4 w-28 h-28';
-            let iconClasses = 'w-10 h-10';
-            let textClasses = 'text-xs';
-
-            if (shortcutsSize === 'sm') {
-                cardClasses = 'p-3 w-20 h-20';
-                iconClasses = 'w-7 h-7';
-                textClasses = 'text-[10px]';
-            } else if (shortcutsSize === 'lg') {
-                cardClasses = 'p-5 w-36 h-36';
-                iconClasses = 'w-12 h-12';
-                textClasses = 'text-sm';
-            }
-
-            let html = '';
-
-            // Add button item matching exact design from screenshots
-            html += `
-                <div onclick="toggleModal('addShortcutModal', true)" 
-                     class="${cardClasses} border-2 border-dashed border-white/20 hover:border-white/40 bg-slate-900/30 dark:bg-slate-900/40 hover:bg-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition group shadow-md backdrop-blur-sm">
-                    <i data-lucide="plus" class="w-6 h-6 text-slate-300 group-hover:scale-110 transition"></i>
-                    <span class="${textClasses} font-semibold mt-1 text-slate-300">إضافة</span>
-                </div>
-            `;
-
-            // Shortcut Items
-            state.shortcuts.forEach((item, index) => {
-                html += `
-                    <div class="relative group">
-                        <a href="${item.url}" class="${cardClasses} bg-slate-900/50 hover:bg-slate-900/80 border border-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition shadow-xl backdrop-blur-md hover:scale-105 active:scale-95">
-                            <img src="${item.icon}" id="fav-${index}" 
-                                 onerror="this.src='https://placehold.co/48x48/6366f1/ffffff?text=${encodeURIComponent(item.title[0])}'" 
-                                 class="${iconClasses} object-contain rounded-lg mb-2" />
-                            <span class="${textClasses} font-medium text-slate-200 truncate max-w-full text-center">${item.title}</span>
-                        </a>
-                        <button onclick="deleteShortcut(event, ${index})" class="absolute -top-1 -right-1 p-1 bg-rose-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition shadow-lg hover:scale-110">
-                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            initLucide();
-        }
-
-        // Add & Delete Shortcuts
-        function saveShortcut() {
-            const title = document.getElementById('shortcutTitle').value.trim();
-            let url = document.getElementById('shortcutUrl').value.trim();
-
-            if (!title || !url) return;
-
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
-            }
-
-            const icon = `https://www.google.com/s2/favicons?domain=${url}&sz=64`;
-
-            state.shortcuts.push({ title, url, icon });
-            saveState();
-            renderShortcuts();
-            toggleModal('addShortcutModal', false);
-
-            document.getElementById('shortcutTitle').value = '';
-            document.getElementById('shortcutUrl').value = '';
-        }
-
-        function deleteShortcut(e, index) {
-            e.stopPropagation();
-            state.shortcuts.splice(index, 1);
-            saveState();
-            renderShortcuts();
-        }
-
-        // Clock & Date Formatting Logic using Windows-like tokens
-        function formatWindowsDate(date, formatPattern, is12Hour) {
-            const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-            const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-
-            let hours = date.getHours();
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-            const tt = hours >= 12 ? 'PM' : 'AM';
-
-            let h12 = hours % 12;
-            h12 = h12 ? h12 : 12; // Hour 0 is 12
-
-            const dayNum = date.getDate();
-            const dd = String(dayNum).padStart(2, '0');
-            const dddd = days[date.getDay()];
-            const monthNum = date.getMonth() + 1;
-            const MM = String(monthNum).padStart(2, '0');
-            const MMMM = months[date.getMonth()];
-            const yyyy = date.getFullYear();
-
-            let formatted = formatPattern;
-
-            // Time replacement
-            formatted = formatted.replace(/h:mm:ss tt/g, `${h12}:${minutes}:${seconds} ${tt}`);
-            formatted = formatted.replace(/h:mm tt/g, `${h12}:${minutes} ${tt}`);
-            formatted = formatted.replace(/HH:mm:ss/g, `${String(hours).padStart(2, '0')}:${minutes}:${seconds}`);
-            formatted = formatted.replace(/HH:mm/g, `${String(hours).padStart(2, '0')}:${minutes}`);
-
-            // Date replacement
-            formatted = formatted.replace(/dddd/g, dddd);
-            formatted = formatted.replace(/dd/g, dd);
-            formatted = formatted.replace(/d/g, dayNum);
-            formatted = formatted.replace(/MMMM/g, MMMM);
-            formatted = formatted.replace(/MM/g, MM);
-            formatted = formatted.replace(/yyyy/g, yyyy);
-
-            return formatted;
-        }
+        const clockEl = document.getElementById('clock');
+        const dateEl = document.getElementById('date');
+        const clockWrapper = document.getElementById('clock-wrapper');
 
         function updateClock() {
             const now = new Date();
-            const { clockSystem, timeFormat, dateFormat, showClock, showDate, shortcutsSize } = state.settings;
+            const timeFormat = localStorage.getItem('customTimeFormat') || 'h:mm:ss tt';
+            const dateFormat = localStorage.getItem('customDateFormat') || 'dddd, MMMM d, yyyy';
+            const displayMode = localStorage.getItem('clockDisplay') || 'both';
 
-            const timeEl = document.getElementById('clockTime');
-            const dateEl = document.getElementById('clockDate');
-
-            // Text sizing responsive adjustment
-            if (shortcutsSize === 'lg') {
-                timeEl.className = "text-5xl md:text-6xl font-bold tracking-tight text-slate-100 drop-shadow-md";
-            } else {
-                timeEl.className = "text-6xl md:text-7xl font-bold tracking-tight text-slate-100 drop-shadow-md";
+            if (displayMode === 'none') {
+                clockWrapper.style.display = 'none';
+                return;
             }
 
-            if (showClock) {
-                timeEl.textContent = formatWindowsDate(now, timeFormat, clockSystem === '12');
-                timeEl.style.display = 'block';
+            clockWrapper.style.display = 'flex';
+            
+            if (displayMode === 'both' || displayMode === 'time-only') {
+                clockEl.style.display = 'block';
+                clockEl.innerText = formatDateTime(now, timeFormat);
             } else {
-                timeEl.style.display = 'none';
+                clockEl.style.display = 'none';
             }
 
-            if (showDate) {
-                dateEl.textContent = formatWindowsDate(now, dateFormat, clockSystem === '12');
+            if (displayMode === 'both' || displayMode === 'date-only') {
                 dateEl.style.display = 'block';
+                dateEl.innerText = formatDateTime(now, dateFormat);
             } else {
                 dateEl.style.display = 'none';
             }
         }
 
-        function startClock() {
-            updateClock();
-            setInterval(updateClock, 1000);
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- Settings Change Handlers ---
+        document.getElementById('clockPosSelect').addEventListener('change', (e) => {
+            clockWrapper.className = 'focusable-element ' + e.target.value;
+            localStorage.setItem('clockPos', e.target.value);
+        });
+
+        const searchWrapper = document.getElementById('searchWrapper');
+        document.getElementById('searchPosSelect').addEventListener('change', (e) => {
+            searchWrapper.className = 'search-wrapper ' + e.target.value;
+            localStorage.setItem('searchPos', e.target.value);
+        });
+
+        const bookmarksContainer = document.getElementById('bookmarksContainer');
+        document.getElementById('bookmarkPosSelect').addEventListener('change', (e) => {
+            bookmarksContainer.className = 'bookmarks-section focusable-element ' + e.target.value;
+            localStorage.setItem('bookmarkPos', e.target.value);
+        });
+
+        document.getElementById('searchEngineSelect').addEventListener('change', (e) => {
+            localStorage.setItem('searchEngine', e.target.value);
+        });
+
+        document.getElementById('bookmarkSizeSelect').addEventListener('change', (e) => {
+            setBookmarkSize(e.target.value);
+        });
+
+        function setBookmarkSize(sizeClass) {
+            document.body.classList.remove('bm-small', 'bm-medium', 'bm-large');
+            document.body.classList.add(sizeClass);
+            localStorage.setItem('bookmarkSize', sizeClass);
         }
 
-        // Settings updates
-        function updateSettings() {
-            state.settings.searchEngine = document.getElementById('settingEngine').value;
-            state.settings.clockSystem = document.getElementById('settingClockSystem').value;
-            state.settings.clockPos = document.getElementById('settingClockPos').value;
-            state.settings.dateFormat = document.getElementById('settingDateFormat').value;
-            state.settings.timeFormat = document.getElementById('settingTimeFormat').value;
-            state.settings.showClock = document.getElementById('settingShowClock').checked;
-            state.settings.showDate = document.getElementById('settingShowDate').checked;
-            state.settings.searchPos = document.getElementById('settingSearchPos').value;
-            state.settings.shortcutsPos = document.getElementById('settingShortcutsPos').value;
-            state.settings.shortcutsSize = document.getElementById('settingShortcutsSize').value;
+        document.getElementById('themeSelect').addEventListener('change', (e) => {
+            setTheme(e.target.value);
+        });
 
-            saveState();
-            applyState();
-        }
-
-        // Search Bar Functionality
-        function setSearchFocus(isFocused) {
-            if (isFocused) {
-                document.body.classList.add('search-focused');
-            } else {
-                document.body.classList.remove('search-focused');
-            }
-        }
-
-        function handleSearch(e) {
-            e.preventDefault();
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
-
-            if (query.startsWith('http://') || query.startsWith('https://')) {
-                window.location.href = query;
-            } else if (query.includes('.') && !query.includes(' ')) {
-                window.location.href = 'https://' + query;
-            } else {
-                window.location.href = state.settings.searchEngine + encodeURIComponent(query);
-            }
-        }
-
-        // Custom Background Handler
-        function handleBgUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                state.settings.bgImage = event.target.result;
-                saveState();
-                applyState();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function removeBackground() {
-            state.settings.bgImage = '';
-            saveState();
-            applyState();
-        }
-
-        // Theme Selection
         function setTheme(theme) {
-            state.settings.theme = theme;
-            saveState();
-            applyState();
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
+            localStorage.setItem('theme', theme);
         }
 
-        // Backup and Restore
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `startpage_backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
+        document.getElementById('clockDisplaySelect').addEventListener('change', (e) => {
+            localStorage.setItem('clockDisplay', e.target.value);
+            updateClock();
+        });
 
-        function importData(e) {
+        document.getElementById('timeFormatInput').addEventListener('input', (e) => {
+            localStorage.setItem('customTimeFormat', e.target.value || 'h:mm:ss tt');
+            updateClock();
+        });
+
+        document.getElementById('dateFormatInput').addEventListener('input', (e) => {
+            localStorage.setItem('customDateFormat', e.target.value || 'dddd, MMMM d, yyyy');
+            updateClock();
+        });
+
+        // Background Upload
+        document.getElementById('bgInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const bgUrl = event.target.result;
+                    document.body.style.backgroundImage = `url('${bgUrl}')`;
+                    localStorage.setItem('customBg', bgUrl);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function resetBg() {
+            localStorage.removeItem('customBg');
+            document.body.style.backgroundImage = '';
+        }
+
+        // --- Load Saved Settings ---
+        const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
+        const savedSearchPos = localStorage.getItem('searchPos') || 'search-pos-center';
+        const savedBookmarkPos = localStorage.getItem('bookmarkPos') || 'bm-pos-bottom';
+        const savedEngine = localStorage.getItem('searchEngine') || 'google';
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        const savedBmSize = localStorage.getItem('bookmarkSize') || 'bm-medium';
+        const savedClockDisplay = localStorage.getItem('clockDisplay') || 'both';
+        const savedCustomTimeFormat = localStorage.getItem('customTimeFormat') || 'h:mm:ss tt';
+        const savedCustomDateFormat = localStorage.getItem('customDateFormat') || 'dddd, MMMM d, yyyy';
+
+        clockWrapper.className = 'focusable-element ' + savedClockPos;
+        searchWrapper.className = 'search-wrapper ' + savedSearchPos;
+        bookmarksContainer.className = 'bookmarks-section focusable-element ' + savedBookmarkPos;
+
+        document.getElementById('clockPosSelect').value = savedClockPos;
+        document.getElementById('searchPosSelect').value = savedSearchPos;
+        document.getElementById('bookmarkPosSelect').value = savedBookmarkPos;
+        document.getElementById('searchEngineSelect').value = savedEngine;
+        document.getElementById('themeSelect').value = savedTheme;
+        document.getElementById('bookmarkSizeSelect').value = savedBmSize;
+        document.getElementById('clockDisplaySelect').value = savedClockDisplay;
+        document.getElementById('timeFormatInput').value = savedCustomTimeFormat;
+        document.getElementById('dateFormatInput').value = savedCustomDateFormat;
+
+        setTheme(savedTheme);
+        setBookmarkSize(savedBmSize);
+
+        const savedBg = localStorage.getItem('customBg');
+        if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
+
+        // --- Search & Suggestions ---
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsCard = document.getElementById('suggestionsCard');
+        let selectedIndex = -1;
+
+        searchInput.addEventListener('focus', () => {
+            document.body.classList.add('focus-mode');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchWrapper.contains(e.target)) {
+                document.body.classList.remove('focus-mode');
+                suggestionsCard.classList.remove('active');
+            }
+        });
+
+        window.handleGoogleSuggestions = function(data) {
+            const suggestions = data[1] || [];
+            if (suggestions.length === 0 || !document.body.classList.contains('focus-mode')) {
+                suggestionsCard.classList.remove('active');
+                return;
+            }
+
+            selectedIndex = -1;
+            suggestionsCard.innerHTML = suggestions.slice(0, 5).map((item, idx) => `
+                <div class="suggestion-item" data-index="${idx}" onclick="executeSearch('${item[0]}')">
+                    <svg class="suggestion-icon" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <span>${item[0]}</span>
+                </div>
+            `).join('');
+
+            suggestionsCard.classList.add('active');
+        };
+
+        let currentScript = null;
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            if (!query) {
+                suggestionsCard.classList.remove('active');
+                return;
+            }
+
+            if (currentScript) document.body.removeChild(currentScript);
+
+            currentScript = document.createElement('script');
+            currentScript.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}&jsonp=handleGoogleSuggestions`;
+            document.body.appendChild(currentScript);
+        });
+
+        function updateSelection(items) {
+            items.forEach((item, idx) => {
+                if (idx === selectedIndex) {
+                    item.classList.add('selected');
+                    searchInput.value = item.querySelector('span').innerText;
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        searchInput.addEventListener('keydown', (e) => {
+            const items = suggestionsCard.querySelectorAll('.suggestion-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (items.length > 0) {
+                    selectedIndex = (selectedIndex + 1) % items.length;
+                    updateSelection(items);
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (items.length > 0) {
+                    selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+                    updateSelection(items);
+                }
+            } else if (e.key === 'Enter') {
+                executeSearch(searchInput.value);
+            }
+        });
+
+        function executeSearch(query) {
+            if (!query.trim()) return;
+            const engine = localStorage.getItem('searchEngine') || 'google';
+            let url = '';
+
+            if (query.startsWith('http://') || query.startsWith('https://') || (query.includes('.') && !query.includes(' '))) {
+                url = query.startsWith('http') ? query : 'https://' + query;
+            } else {
+                switch (engine) {
+                    case 'bing': url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`; break;
+                    case 'duckduckgo': url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`; break;
+                    case 'brave': url = `https://search.brave.com/search?q=${encodeURIComponent(query)}`; break;
+                    default: url = `https://www.google.com/search?q=${encodeURIComponent(query)}`; break;
+                }
+            }
+            window.location.href = url;
+        }
+
+        // --- Bookmarks Logic ---
+        const defaultBookmarks = [
+            { name: 'Google', url: 'https://www.google.com' },
+            { name: 'YouTube', url: 'https://www.youtube.com' },
+            { name: 'GitHub', url: 'https://www.github.com' }
+        ];
+
+        function getBookmarks() {
+            const saved = localStorage.getItem('bookmarks');
+            return saved ? JSON.parse(saved) : defaultBookmarks;
+        }
+
+        function saveBookmarks(bookmarks) {
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            renderBookmarks();
+        }
+
+        function renderBookmarks() {
+            const bookmarks = getBookmarks();
+            bookmarksContainer.innerHTML = '';
+
+            bookmarks.forEach((bm, index) => {
+                const domain = new URL(bm.url).hostname;
+                const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+
+                const card = document.createElement('a');
+                card.className = 'bookmark-card';
+                card.href = bm.url;
+
+                card.innerHTML = `
+                    <button class="bookmark-delete" onclick="deleteBookmark(event, ${index})" title="حذف">&times;</button>
+                    <img class="bookmark-icon" src="${iconUrl}" alt="${bm.name}" onerror="this.src='https://via.placeholder.com/32'">
+                    <span class="bookmark-title">${bm.name}</span>
+                `;
+                bookmarksContainer.appendChild(card);
+            });
+
+            const addBtn = document.createElement('div');
+            addBtn.className = 'bookmark-card bookmark-add-btn';
+            addBtn.onclick = () => openModal('addSiteModal');
+            addBtn.innerHTML = `
+                <svg class="bookmark-add-icon" viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                <span class="bookmark-title">إضافة</span>
+            `;
+            bookmarksContainer.appendChild(addBtn);
+        }
+
+        function handleAddSite() {
+            const name = document.getElementById('siteNameInput').value.trim();
+            let url = document.getElementById('siteUrlInput').value.trim();
+
+            if (!name || !url) return;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+
+            const bookmarks = getBookmarks();
+            bookmarks.push({ name, url });
+            saveBookmarks(bookmarks);
+
+            document.getElementById('siteNameInput').value = '';
+            document.getElementById('siteUrlInput').value = '';
+            closeModal('addSiteModal');
+        }
+
+        function deleteBookmark(event, index) {
+            event.preventDefault();
+            event.stopPropagation();
+            const bookmarks = getBookmarks();
+            bookmarks.splice(index, 1);
+            saveBookmarks(bookmarks);
+        }
+
+        renderBookmarks();
+
+        // --- Backup & Restore ---
+        function exportData() {
+            const data = {
+                bookmarks: getBookmarks(),
+                settings: {
+                    clockPos: localStorage.getItem('clockPos'),
+                    searchPos: localStorage.getItem('searchPos'),
+                    bookmarkPos: localStorage.getItem('bookmarkPos'),
+                    searchEngine: localStorage.getItem('searchEngine'),
+                    theme: localStorage.getItem('theme'),
+                    bookmarkSize: localStorage.getItem('bookmarkSize'),
+                    clockDisplay: localStorage.getItem('clockDisplay'),
+                    customTimeFormat: localStorage.getItem('customTimeFormat'),
+                    customDateFormat: localStorage.getItem('customDateFormat'),
+                    customBg: localStorage.getItem('customBg')
+                }
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `startpage_backup_${new Date().toISOString().slice(0,10)}.json`);
+            dlAnchorElem.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function(e) {
                 try {
-                    const imported = JSON.parse(event.target.result);
-                    if (imported.settings && imported.shortcuts) {
-                        state = imported;
-                        saveState();
-                        applyState();
-                        alert('تم استيراد البيانات والإعدادات بنجاح!');
+                    const data = JSON.parse(e.target.result);
+                    if (data.bookmarks) localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks));
+                    if (data.settings) {
+                        Object.keys(data.settings).forEach(key => {
+                            if (data.settings[key]) localStorage.setItem(key, data.settings[key]);
+                        });
                     }
-                } catch(err) {
-                    alert('عذراً، الملف غير صالح.');
+                    location.reload();
+                } catch (err) {
+                    alert('خطأ في تنسيق ملف البيانات!');
                 }
             };
             reader.readAsText(file);
-        }
-
-        // Modal Controls
-        function toggleModal(modalId, show) {
-            const modal = document.getElementById(modalId);
-            if (show) {
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.classList.add('opacity-100');
-            } else {
-                modal.classList.remove('opacity-100');
-                modal.classList.add('opacity-0', 'pointer-events-none');
-            }
         }
     </script>
 </body>
