@@ -4,635 +4,423 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Startpage</title>
-    <!-- Google Fonts Inter for ultra clean typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --bg-color: #0d0e15;
-            --card-bg: rgba(22, 25, 38, 0.65);
-            --card-hover: rgba(35, 40, 60, 0.85);
-            --search-bg: rgba(26, 29, 45, 0.85);
-            --search-focus-bg: #161824;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-highlight: rgba(255, 255, 255, 0.18);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --accent-color: #6366f1;
-            --radius-lg: 20px;
-            --radius-md: 14px;
-            --radius-sm: 10px;
-            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
-            --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             height: 100vh;
-            width: 100vw;
-            background: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0d0e15 70%);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: var(--text-primary);
+            background: #0f0f17 center/cover no-repeat fixed;
+            color: #ffffff;
             overflow: hidden;
             position: relative;
-            transition: background-image 0.5s ease-in-out;
         }
 
-        /* Ambient Glow Overlay */
-        .ambient-bg {
+        /* الطبقة الشفافة لتعتيم الخلفية */
+        .overlay {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08), transparent 60%);
-            pointer-events: none;
+            background: rgba(0, 0, 0, 0.3);
             z-index: 1;
+            transition: opacity 0.4s ease;
         }
 
-        .settings-trigger {
+        /* زر الإعدادات الأنيق */
+        .settings-btn {
             position: fixed;
-            top: 24px;
-            right: 24px;
-            width: 44px;
-            height: 44px;
+            bottom: 25px;
+            left: 25px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 50;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .settings-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
         }
 
-        .settings-trigger:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: var(--text-primary);
-            transform: rotate(45deg);
-            border-color: var(--border-highlight);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .settings-trigger svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        .focusable-element {
-            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.focus-mode .focusable-element {
-            opacity: 0 !important;
-            pointer-events: none !important;
-            transform: scale(0.96);
-            filter: blur(8px);
-        }
-
-        #clock {
-            position: absolute;
-            font-size: 4.5rem;
-            font-weight: 700;
-            letter-spacing: -1.5px;
-            color: #ffffff;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            z-index: 10;
-            user-select: none;
-            direction: ltr;
-        }
-
-        .clock-top-left { top: 40px; left: 40px; transform: none; }
-        .clock-top-center { top: 40px; left: 50%; transform: translateX(-50%); }
-        .clock-top-right { top: 40px; right: 100px; transform: none; }
-        .clock-center { top: 35%; left: 50%; transform: translate(-50%, -50%); }
-
-        .search-wrapper {
-            position: absolute;
-            width: 90%;
-            max-width: 620px;
-            z-index: 30;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .search-pos-top-center { top: 160px; left: 50%; transform: translateX(-50%); }
-        .search-pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-
-        body.focus-mode .search-wrapper {
-            top: 38% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) scale(1.03) !important;
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-            background: var(--search-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            padding: 6px 18px;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.3s ease;
-        }
-
-        .search-box:focus-within {
-            background: var(--search-focus-bg);
-            border-color: var(--border-highlight);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-        }
-
-        .search-icon-left {
-            width: 22px;
-            height: 22px;
-            fill: var(--text-secondary);
-            margin-left: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: fill 0.3s ease;
-        }
-
-        .search-box:focus-within .search-icon-left {
-            fill: var(--accent-color);
-        }
-
-        .search-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 400;
-            padding: 12px 0;
-            width: 100%;
-        }
-
-        .search-input::placeholder {
-            color: var(--text-secondary);
-            font-weight: 300;
-        }
-
-        .suggestions-card {
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0;
-            right: 0;
-            background: var(--search-focus-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-highlight);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 40;
-        }
-
-        .suggestions-card.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .suggestion-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease;
-            gap: 14px;
-            color: var(--text-primary);
-            font-size: 0.98rem;
-        }
-
-        .suggestion-item:hover, .suggestion-item.selected {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .suggestion-icon {
-            width: 18px;
-            height: 18px;
-            fill: var(--text-secondary);
-            flex-shrink: 0;
-        }
-
-        .suggestion-item:hover .suggestion-icon {
-            fill: var(--text-primary);
-        }
-
-        .bookmarks-section {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 720px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            z-index: 20;
-        }
-
-        .bookmark-card {
-            position: relative;
-            width: 96px;
-            height: 96px;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            gap: 10px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .bookmark-card:hover {
-            background: var(--card-hover);
-            border-color: var(--border-highlight);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .bookmark-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            object-fit: contain;
-        }
-
-        .bookmark-title {
-            font-size: 0.78rem;
-            color: var(--text-primary);
-            width: 80%;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 500;
-        }
-
-        .bookmark-add-btn {
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .bookmark-add-btn:hover {
-            border-color: var(--accent-color);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .bookmark-add-icon {
-            width: 28px;
-            height: 28px;
-            fill: var(--text-secondary);
-            transition: fill 0.3s ease;
-        }
-
-        .bookmark-add-btn:hover .bookmark-add-icon {
-            fill: var(--accent-color);
-        }
-
-        .bookmark-delete {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #ef4444;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-        }
-
-        .bookmark-card:hover .bookmark-delete {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .modal-overlay {
+        /* نافذة الإعدادات */
+        .modal {
+            display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.3s ease;
         }
+        .modal.active { display: flex; opacity: 1; }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-body {
-            background: #131522;
-            border: 1px solid var(--border-highlight);
-            border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 420px;
-            padding: 28px;
-            box-shadow: var(--shadow-lg);
-            transform: scale(0.92) translateY(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-primary);
-        }
-
-        .modal-overlay.active .modal-body {
-            transform: scale(1) translateY(0);
-        }
-
-        .modal-header {
+        .modal-content {
+            background: rgba(24, 24, 37, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            width: 360px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .modal-content h3 { font-weight: 600; margin-bottom: 5px; color: #89b4fa; }
+        .modal-content label { font-size: 0.85rem; color: #a6adc8; display: flex; flex-direction: column; gap: 5px; }
+        .modal-content input, .modal-content select {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        .modal-content select option { background: #181825; color: #fff; }
+
+        /* العناصر القابلة للإخفاء مع الفوكس */
+        .focusable {
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+        body.focus-mode .focusable {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: scale(0.95);
+        }
+
+        /* الساعة */
+        #clock {
+            position: absolute;
+            font-size: 3.8rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+        .clock-top-left { top: 40px; left: 40px; transform: none; }
+        .clock-top-center { top: 40px; left: 50%; transform: translateX(-50%); }
+        .clock-top-right { top: 40px; right: 40px; transform: none; }
+        .clock-center { top: 35%; left: 50%; transform: translate(-50%, -50%); }
+
+        /* شريط البحث */
+        .search-container {
+            position: absolute;
+            width: 90%;
+            max-width: 600px;
+            z-index: 20;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .search-top-center { top: 130px; left: 50%; transform: translateX(-50%); }
+        .search-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        .search-box {
+            position: relative;
+            background: rgba(24, 24, 37, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex;
             align-items: center;
-            margin-bottom: 22px;
+            padding: 0 18px;
+            transition: all 0.3s ease;
+        }
+        .search-container.active .search-box {
+            border-radius: 16px 16px 0 0;
+            background: rgba(30, 30, 46, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .modal-close {
+        .search-icon { width: 20px; height: 20px; fill: #a6adc8; margin-left: 12px; }
+        .search-input {
+            width: 100%;
+            padding: 16px 0;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            line-height: 1;
-            transition: color 0.2s ease;
-        }
-
-        .modal-close:hover {
-            color: var(--text-primary);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-size: 0.95rem;
+            color: #fff;
+            font-size: 1.05rem;
             outline: none;
-            transition: border-color 0.2s ease;
         }
 
-        .form-control:focus {
-            border-color: var(--accent-color);
+        /* قائمة الاقتراحات */
+        .suggestions {
+            display: none;
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 0 0 16px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-top: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
         }
+        .search-container.active .suggestions { display: block; }
 
-        select.form-control {
+        .suggestion-item {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
-        }
-
-        select.form-control option {
-            background: #131522;
-            color: var(--text-primary);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 12px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
+            transition: background 0.2s ease;
+            color: #cdd6f4;
             font-size: 0.95rem;
-            font-weight: 600;
+        }
+        .suggestion-item:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+        .suggestion-item svg { width: 16px; height: 16px; fill: #7f849c; }
+
+        /* الصفحات المفضلة */
+        .bookmarks {
+            position: absolute;
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 90%;
+            max-width: 800px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bm-center-top { top: 30%; left: 50%; transform: translateX(-50%); }
+        .bm-center { top: 65%; left: 50%; transform: translateX(-50%); }
+        .bm-bottom { bottom: 60px; left: 50%; transform: translateX(-50%); }
+
+        .bm-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #cdd6f4;
+            width: 80px;
+            position: relative;
+            group: relative;
+        }
+        .bm-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .bm-icon img { width: 26px; height: 26px; border-radius: 6px; }
+        .bm-card:hover .bm-icon {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+        }
+        .bm-title { font-size: 0.8rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        
+        .bm-delete {
+            position: absolute;
+            top: -4px; right: 8px;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: #f38ba8;
+            color: #11111b;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s ease, transform 0.1s ease;
-            margin-top: 10px;
+            z-index: 5;
         }
+        .bm-card:hover .bm-delete { display: flex; }
 
-        .btn-primary:hover {
-            background: #4f46e5;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
+        .add-bm-btn { cursor: pointer; }
+        .add-bm-btn .bm-icon { border: 2px dashed rgba(255, 255, 255, 0.2); font-size: 1.4rem; color: #a6adc8; }
     </style>
 </head>
 <body>
-    <div class="ambient-bg"></div>
 
-    <button class="settings-trigger focusable-element" onclick="openModal('settingsModal')" title="الإعدادات">
-        <svg viewBox="0 0 24 24">
-            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-        </svg>
+    <div class="overlay"></div>
+
+    <!-- زر الإعدادات -->
+    <button class="settings-btn" onclick="toggleModal(true)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
     </button>
 
-    <div id="clock" class="focusable-element clock-top-center">00:00:00</div>
+    <!-- نافذة الإعدادات -->
+    <div class="modal" id="settingsModal" onclick="if(event.target===this) toggleModal(false)">
+        <div class="modal-content">
+            <h3>الإعدادات</h3>
+            
+            <label>تنسيق الساعة والتاريخ بالتخصيص:
+                <input type="text" id="timeFormatInput" placeholder="HH:mm:ss أو DD/MM/YYYY">
+                <small style="color:#7f849c; font-size:0.75rem; margin-top:2px;">
+                    الرموز المتاحة: HH (ساعات 24), hh (ساعات 12), mm (دقائق), ss (ثواني), A (AM/PM), YYYY (سنة), MM (شهر), DD (يوم), dddd (اسم اليوم)
+                </small>
+            </label>
 
-    <div class="search-wrapper search-pos-center" id="searchWrapper">
-        <div class="search-box">
-            <div class="search-icon-left">
-                <svg viewBox="0 0 24 24">
-                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                </svg>
-            </div>
-            <input type="text" class="search-input" id="searchInput" placeholder="ابحث في Google أو أدخل رابطاً..." autocomplete="off">
-        </div>
-        <!-- Live Suggestions Card -->
-        <div class="suggestions-card" id="suggestionsCard"></div>
-    </div>
-
-    <div class="bookmarks-section focusable-element" id="bookmarksContainer">
-        <!-- Bookmark cards rendered dynamically -->
-    </div>
-
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal-body">
-            <div class="modal-header">
-                <h3 class="modal-title">الإعدادات</h3>
-                <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">موقع الساعة:</label>
-                <select class="form-control" id="clockPosSelect">
+            <label>موقع الساعة:
+                <select id="clockPosSelect">
                     <option value="clock-top-left">أعلى اليسار</option>
                     <option value="clock-top-center">أعلى الوسط</option>
                     <option value="clock-top-right">أعلى اليمين</option>
                     <option value="clock-center">في المنتصف</option>
                 </select>
-            </div>
+            </label>
 
-            <div class="form-group">
-                <label class="form-label">موقع شريط البحث:</label>
-                <select class="form-control" id="searchPosSelect">
-                    <option value="search-pos-top-center">أعلى المنتصف</option>
-                    <option value="search-pos-center">في المنتصف</option>
+            <label>موقع شريط البحث:
+                <select id="searchPosSelect">
+                    <option value="search-top-center">أعلى المنتصف</option>
+                    <option value="search-center">في المنتصف</option>
                 </select>
-            </div>
+            </label>
 
-            <div class="form-group">
-                <label class="form-label">خلفية المظهر:</label>
-                <input type="file" class="form-control" id="bgInput" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">نظام الوقت:</label>
-                <select class="form-control" id="timeFormatSelect">
-                    <option value="12">12 ساعة (AM/PM)</option>
-                    <option value="24">24 ساعة</option>
+            <label>موقع المواقع المفضلة:
+                <select id="bmPosSelect">
+                    <option value="bm-center-top">أعلى المنتصف</option>
+                    <option value="bm-center">منتصف الصفحة</option>
+                    <option value="bm-bottom">أسفل الصفحة</option>
                 </select>
-            </div>
+            </label>
 
-            <div class="form-group">
-                <label class="form-label">تنسيق الثواني:</label>
-                <select class="form-control" id="timeCustomFormat">
-                    <option value="default">إظهار الثواني</option>
-                    <option value="no-seconds">إخفاء الثواني</option>
-                </select>
-            </div>
+            <label>خلفية الجهاز:
+                <input type="file" id="bgInput" accept="image/*">
+            </label>
 
-            <button class="btn-primary" onclick="closeModal('settingsModal')">حفظ وإغلاق</button>
+            <button onclick="toggleModal(false)" style="background: #f38ba8; color: #11111b; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px;">إغلاق</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="addSiteModal">
-        <div class="modal-body">
-            <div class="modal-header">
-                <h3 class="modal-title">إضافة موقع مفضل</h3>
-                <button class="modal-close" onclick="closeModal('addSiteModal')">&times;</button>
-            </div>
+    <!-- الساعة -->
+    <div id="clock" class="focusable clock-top-center">00:00:00</div>
 
-            <div class="form-group">
-                <label class="form-label">اسم الموقع:</label>
-                <input type="text" class="form-control" id="siteNameInput" placeholder="مثال: Google">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">الرابط (URL):</label>
-                <input type="url" class="form-control" id="siteUrlInput" placeholder="https://www.example.com">
-            </div>
-
-            <button class="btn-primary" onclick="handleAddSite()">إضافة الموقع</button>
+    <!-- شريط البحث -->
+    <div class="search-container search-center" id="searchContainer">
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="ابحث في Google..." autocomplete="off">
         </div>
+        <div class="suggestions" id="suggestionsBox"></div>
     </div>
+
+    <!-- المواقع المفضلة -->
+    <div class="bookmarks focusable bm-bottom" id="bookmarksContainer"></div>
 
     <script>
-        
-        // --- Modal Controllers ---
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
+        function toggleModal(show) {
+            const modal = document.getElementById('settingsModal');
+            if (show) modal.classList.add('active');
+            else modal.classList.remove('active');
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+        // --- 1. التركيز على البحث (Focus Mode) ---
+        const searchInput = document.getElementById('searchInput');
+        const searchContainer = document.getElementById('searchContainer');
+
+        searchInput.addEventListener('focus', () => {
+            document.body.classList.add('focus-mode');
+        });
+
+        searchInput.addEventListener('blur', () => {
+            // تأخير بسيط للسماح بالنقر على الاقتراحات
+            setTimeout(() => {
+                document.body.classList.remove('focus-mode');
+                searchContainer.classList.remove('active');
+            }, 200);
+        });
+
+        // --- 2. محرك التنسيق المخصص للوقت والتاريخ ---
+        function formatDateTime(date, formatStr) {
+            const daysArr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            
+            const hours24 = date.getHours();
+            const hours12 = hours24 % 12 || 12;
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+            const ampm = hours24 >= 12 ? 'PM' : 'AM';
+
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const dayName = daysArr[date.getDay()];
+
+            const pad = (num) => String(num).padStart(2, '0');
+
+            return formatStr
+                .replace(/YYYY/g, year)
+                .replace(/MM/g, pad(month))
+                .replace(/DD/g, pad(day))
+                .replace(/dddd/g, dayName)
+                .replace(/HH/g, pad(hours24))
+                .replace(/hh/g, pad(hours12))
+                .replace(/mm/g, pad(minutes))
+                .replace(/ss/g, pad(seconds))
+                .replace(/A/g, ampm);
         }
 
-        // --- Clock Logic ---
-        const clockEl = document.getElementById('clock');
         function updateClock() {
             const now = new Date();
-            const format = localStorage.getItem('timeFormat') || '12';
-            const customFormat = localStorage.getItem('timeCustomFormat') || 'default';
-
-            let hours = now.getHours();
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            let ampm = '';
-
-            if (format === '12') {
-                ampm = hours >= 12 ? ' PM' : ' AM';
-                hours = hours % 12 || 12;
-            }
-            hours = String(hours).padStart(2, '0');
-
-            let timeString = customFormat === 'no-seconds' 
-                ? `${hours}:${minutes}${ampm}` 
-                : `${hours}:${minutes}:${seconds}${ampm}`;
-
-            clockEl.innerText = timeString;
+            const customFormat = localStorage.getItem('timeCustomFormatStr') || 'HH:mm:ss';
+            document.getElementById('clock').innerText = formatDateTime(now, customFormat);
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- Settings Event Handlers ---
+        const timeFormatInput = document.getElementById('timeFormatInput');
+        timeFormatInput.value = localStorage.getItem('timeCustomFormatStr') || 'HH:mm:ss';
+        timeFormatInput.addEventListener('input', (e) => {
+            const val = e.target.value || 'HH:mm:ss';
+            localStorage.setItem('timeCustomFormatStr', val);
+            updateClock();
+        });
+
+        // --- 3. التحكم بالمواقع والخيارات ---
+        const clockEl = document.getElementById('clock');
+        const bmEl = document.getElementById('bookmarksContainer');
+
         document.getElementById('clockPosSelect').addEventListener('change', (e) => {
-            clockEl.className = 'focusable-element ' + e.target.value;
+            clockEl.className = 'focusable ' + e.target.value;
             localStorage.setItem('clockPos', e.target.value);
         });
 
-        const searchWrapper = document.getElementById('searchWrapper');
         document.getElementById('searchPosSelect').addEventListener('change', (e) => {
-            searchWrapper.className = 'search-wrapper ' + e.target.value;
+            searchContainer.className = 'search-container ' + e.target.value;
             localStorage.setItem('searchPos', e.target.value);
         });
 
-        document.getElementById('timeFormatSelect').addEventListener('change', (e) => {
-            localStorage.setItem('timeFormat', e.target.value);
-            updateClock();
+        document.getElementById('bmPosSelect').addEventListener('change', (e) => {
+            bmEl.className = 'bookmarks focusable ' + e.target.value;
+            localStorage.setItem('bmPos', e.target.value);
         });
 
-        document.getElementById('timeCustomFormat').addEventListener('change', (e) => {
-            localStorage.setItem('timeCustomFormat', e.target.value);
-            updateClock();
-        });
+        // استعادة الخيارات
+        const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
+        const savedSearchPos = localStorage.getItem('searchPos') || 'search-center';
+        const savedBmPos = localStorage.getItem('bmPos') || 'bm-bottom';
 
-        // Background Upload Logic
+        clockEl.className = 'focusable ' + savedClockPos;
+        searchContainer.className = 'search-container ' + savedSearchPos;
+        bmEl.className = 'bookmarks focusable ' + savedBmPos;
+
+        document.getElementById('clockPosSelect').value = savedClockPos;
+        document.getElementById('searchPosSelect').value = savedSearchPos;
+        document.getElementById('bmPosSelect').value = savedBmPos;
+
+        // --- 4. الخلفية ---
         document.getElementById('bgInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -645,164 +433,103 @@
                 reader.readAsDataURL(file);
             }
         });
-
-        // Load Saved Settings
-        const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
-        const savedSearchPos = localStorage.getItem('searchPos') || 'search-pos-center';
-        clockEl.className = 'focusable-element ' + savedClockPos;
-        searchWrapper.className = 'search-wrapper ' + savedSearchPos;
-        document.getElementById('clockPosSelect').value = savedClockPos;
-        document.getElementById('searchPosSelect').value = savedSearchPos;
-
         const savedBg = localStorage.getItem('customBg');
         if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
 
-        const searchInput = document.getElementById('searchInput');
-        const suggestionsCard = document.getElementById('suggestionsCard');
+        // --- 5. الاقتراحات الحية (JSONP) ---
+        const suggestionsBox = document.getElementById('suggestionsBox');
 
-        // Focus Mode Handling
-        searchInput.addEventListener('focus', () => {
-            document.body.classList.add('focus-mode');
-        });
-
-        // Exit Focus Mode when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!searchWrapper.contains(e.target)) {
-                document.body.classList.remove('focus-mode');
-                suggestionsCard.classList.remove('active');
-            }
-        });
-
-        // Global JSONP Callback for Google Autocomplete
         window.handleGoogleSuggestions = function(data) {
-            const suggestions = data[1] || [];
-            if (suggestions.length === 0 || !document.body.classList.contains('focus-mode')) {
-                suggestionsCard.classList.remove('active');
-                return;
+            const suggestions = data[1];
+            if (suggestions && suggestions.length > 0) {
+                suggestionsBox.innerHTML = suggestions.slice(0, 5).map(item => `
+                    <div class="suggestion-item" onclick="submitSearch('${item[0]}')">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        <span>${item[0]}</span>
+                    </div>
+                `).join('');
+                searchContainer.classList.add('active');
+            } else {
+                searchContainer.classList.remove('active');
             }
-
-            suggestionsCard.innerHTML = suggestions.slice(0, 5).map(item => `
-                <div class="suggestion-item" onclick="executeSearch('${item[0]}')">
-                    <svg class="suggestion-icon" viewBox="0 0 24 24">
-                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                    </svg>
-                    <span>${item[0]}</span>
-                </div>
-            `).join('');
-
-            suggestionsCard.classList.add('active');
         };
 
-        // Fetch Autocomplete via JSONP Script Injection
-        let currentScript = null;
         searchInput.addEventListener('input', function() {
             const query = this.value.trim();
             if (!query) {
-                suggestionsCard.classList.remove('active');
+                searchContainer.classList.remove('active');
                 return;
             }
+            const oldScript = document.getElementById('jsonp-suggestions');
+            if (oldScript) oldScript.remove();
 
-            if (currentScript) {
-                document.body.removeChild(currentScript);
-            }
-
-            currentScript = document.createElement('script');
-            currentScript.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}&jsonp=handleGoogleSuggestions`;
-            document.body.appendChild(currentScript);
+            const script = document.createElement('script');
+            script.id = 'jsonp-suggestions';
+            script.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}&callback=handleGoogleSuggestions`;
+            document.body.appendChild(script);
         });
 
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                executeSearch(searchInput.value);
-            }
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitSearch(this.value);
         });
 
-        function executeSearch(query) {
-            if (!query.trim()) return;
-            if (query.startsWith('http://') || query.startsWith('https://')) {
-                window.location.href = query;
-            } else if (query.includes('.') && !query.includes(' ')) {
-                window.location.href = 'https://' + query;
-            } else {
-                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            }
+        function submitSearch(query) {
+            if (query) window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         }
 
-        const defaultBookmarks = [
-            { name: 'Google', url: 'https://www.google.com' },
-            { name: 'YouTube', url: 'https://www.youtube.com' },
-            { name: 'GitHub', url: 'https://www.github.com' }
-        ];
-
+        // --- 6. إدارة المفضلة ---
         function getBookmarks() {
-            const stored = localStorage.getItem('userBookmarks');
-            return stored ? JSON.parse(stored) : defaultBookmarks;
+            return JSON.parse(localStorage.getItem('bookmarks') || '[{"name":"YouTube","url":"https://youtube.com"},{"name":"GitHub","url":"https://github.com"}]');
         }
 
         function renderBookmarks() {
-            const container = document.getElementById('bookmarksContainer');
             const list = getBookmarks();
-
             let html = list.map((item, index) => {
-                let domain = '';
-                try {
-                    domain = new URL(item.url).hostname;
-                } catch(e) {
-                    domain = item.url;
-                }
-                const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-
+                const domain = new URL(item.url).hostname;
+                const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
                 return `
-                    <div class="bookmark-card" onclick="window.location.href='${item.url}'">
-                        <button class="bookmark-delete" onclick="event.stopPropagation(); deleteBookmark(${index});" title="حذف">&times;</button>
-                        <img class="bookmark-icon" src="${faviconUrl}" onerror="this.src='https://placehold.co/32x32/1a1d2d/ffffff?text=${item.name[0]}'" alt="${item.name}">
-                        <span class="bookmark-title">${item.name}</span>
+                    <div class="bm-card">
+                        <div class="bm-delete" onclick="deleteBookmark(${index})">✕</div>
+                        <a href="${item.url}" class="bm-icon">
+                            <img src="${iconUrl}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>'">
+                        </a>
+                        <span class="bm-title">${item.name}</span>
                     </div>
                 `;
             }).join('');
 
-            // Add Site Button
             html += `
-                <div class="bookmark-card bookmark-add-btn" onclick="openModal('addSiteModal')">
-                    <svg class="bookmark-add-icon" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                    <span class="bookmark-title" style="color: var(--text-secondary);">إضافة موقع</span>
+                <div class="bm-card add-bm-btn" onclick="addNewBookmark()">
+                    <div class="bm-icon">+</div>
+                    <span class="bm-title">إضافة موقع</span>
                 </div>
             `;
-
-            container.innerHTML = html;
+            bmEl.innerHTML = html;
         }
 
-        function handleAddSite() {
-            const name = document.getElementById('siteNameInput').value.trim();
-            let url = document.getElementById('siteUrlInput').value.trim();
-
-            if (!name || !url) return;
-
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
+        function addNewBookmark() {
+            const url = prompt('أدخل رابط الموقع (مثل https://google.com):');
+            if (url) {
+                let formattedUrl = url.startsWith('http') ? url : 'https://' + url;
+                try {
+                    const name = prompt('أدخل اسم الموقع:') || new URL(formattedUrl).hostname;
+                    const list = getBookmarks();
+                    list.push({ name, url: formattedUrl });
+                    localStorage.setItem('bookmarks', JSON.stringify(list));
+                    renderBookmarks();
+                } catch(e) {
+                    alert('رابط غير صالح!');
+                }
             }
-
-            const list = getBookmarks();
-            list.push({ name, url });
-            localStorage.setItem('userBookmarks', JSON.stringify(list));
-
-            document.getElementById('siteNameInput').value = '';
-            document.getElementById('siteUrlInput').value = '';
-
-            closeModal('addSiteModal');
-            renderBookmarks();
         }
 
         function deleteBookmark(index) {
             const list = getBookmarks();
             list.splice(index, 1);
-            localStorage.setItem('userBookmarks', JSON.stringify(list));
+            localStorage.setItem('bookmarks', JSON.stringify(list));
             renderBookmarks();
         }
 
-        // Initialize Bookmarks
         renderBookmarks();
     </script>
 </body>
