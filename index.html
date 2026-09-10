@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Startpage</title>
+    <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,6 +28,19 @@
             --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
         }
 
+        body.light-theme {
+            --bg-color: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --card-hover: rgba(241, 245, 249, 0.9);
+            --search-bg: rgba(255, 255, 255, 0.85);
+            --search-focus-bg: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-highlight: rgba(0, 0, 0, 0.15);
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.08);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -47,7 +61,11 @@
             color: var(--text-primary);
             overflow: hidden;
             position: relative;
-            transition: background-image 0.5s ease-in-out;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        body.light-theme {
+            background-image: radial-gradient(circle at 50% 30%, #e0e7ff 0%, #f1f5f9 70%);
         }
 
         .ambient-bg {
@@ -108,11 +126,11 @@
 
         #clock {
             position: absolute;
-            font-size: 3.8rem;
+            font-size: 4.5rem;
             font-weight: 700;
-            letter-spacing: -1px;
-            color: #ffffff;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            letter-spacing: -1.5px;
+            color: var(--text-primary);
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             z-index: 10;
             user-select: none;
             direction: ltr;
@@ -135,9 +153,9 @@
         .search-pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
         body.focus-mode .search-wrapper {
-            top: 40% !important;
+            top: 38% !important;
             left: 50% !important;
-            transform: translate(-50%, -50%) scale(1.02) !important;
+            transform: translate(-50%, -50%) scale(1.03) !important;
         }
 
         .search-box {
@@ -230,7 +248,7 @@
         }
 
         .suggestion-item:hover, .suggestion-item.selected {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(99, 102, 241, 0.15);
         }
 
         .suggestion-icon {
@@ -240,12 +258,9 @@
             flex-shrink: 0;
         }
 
-        .suggestion-item:hover .suggestion-icon {
-            fill: var(--text-primary);
-        }
-
         .bookmarks-section {
             position: absolute;
+            bottom: 60px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
@@ -255,12 +270,7 @@
             gap: 20px;
             flex-wrap: wrap;
             z-index: 20;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .bm-pos-top { top: 220px; }
-        .bm-pos-center { top: 66%; }
-        .bm-pos-bottom { bottom: 50px; }
 
         .bookmark-card {
             position: relative;
@@ -285,7 +295,7 @@
             background: var(--card-hover);
             border-color: var(--border-highlight);
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .bookmark-icon {
@@ -307,8 +317,8 @@
         }
 
         .bookmark-add-btn {
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.02);
+            border: 2px dashed var(--border-highlight);
+            background: transparent;
         }
 
         .bookmark-add-btn:hover {
@@ -352,7 +362,6 @@
             transform: scale(1);
         }
 
-        /* --- Modal & Settings Styles --- */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -374,26 +383,18 @@
         }
 
         .modal-body {
-            background: #131522;
+            background: var(--search-focus-bg);
             border: 1px solid var(--border-highlight);
             border-radius: var(--radius-lg);
             width: 90%;
-            max-width: 480px;
-            max-height: 85vh;
-            overflow-y: auto;
+            max-width: 440px;
             padding: 28px;
             box-shadow: var(--shadow-lg);
             transform: scale(0.92) translateY(20px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-primary);
-        }
-
-        .modal-body::-webkit-scrollbar {
-            width: 6px;
-        }
-        .modal-body::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
         .modal-overlay.active .modal-body {
@@ -405,8 +406,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 22px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
         }
 
         .modal-title {
@@ -429,13 +428,13 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .form-label {
             display: block;
-            font-size: 0.88rem;
-            color: var(--text-primary);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
             margin-bottom: 8px;
             font-weight: 500;
         }
@@ -461,42 +460,8 @@
         }
 
         select.form-control option {
-            background: #131522;
+            background: var(--bg-color);
             color: var(--text-primary);
-        }
-
-        /* Time Pattern Guide Box */
-        .pattern-guide {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 12px;
-            margin-top: 10px;
-        }
-
-        .pattern-guide-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--accent-color);
-            margin-bottom: 8px;
-        }
-
-        .pattern-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .pattern-grid code {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            direction: ltr;
-            display: inline-block;
         }
 
         .btn-primary {
@@ -513,6 +478,25 @@
             margin-top: 10px;
         }
 
+        .btn-secondary {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
         .btn-primary:hover {
             background: #4f46e5;
         }
@@ -527,7 +511,7 @@
 
     <button class="settings-trigger focusable-element" onclick="openModal('settingsModal')" title="الإعدادات">
         <svg viewBox="0 0 24 24">
-            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/>
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
         </svg>
     </button>
 
@@ -540,19 +524,30 @@
                     <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
             </div>
-            <input type="text" class="search-input" id="searchInput" placeholder="ابحث في Google أو أدخل رابطاً..." autocomplete="off">
+            <input type="text" class="search-input" id="searchInput" placeholder="ابحث أو أدخل رابطاً..." autocomplete="off">
         </div>
+        <!-- Live Suggestions Card -->
         <div class="suggestions-card" id="suggestionsCard"></div>
     </div>
 
-    <div class="bookmarks-section focusable-element bm-pos-bottom" id="bookmarksContainer"></div>
+    <div class="bookmarks-section focusable-element" id="bookmarksContainer"></div>
 
-    <!-- Modal Settings -->
+    <!-- Settings Modal -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-body">
             <div class="modal-header">
                 <h3 class="modal-title">الإعدادات</h3>
                 <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">محرك البحث الإفتراضي:</label>
+                <select class="form-control" id="searchEngineSelect">
+                    <option value="google">Google</option>
+                    <option value="bing">Bing</option>
+                    <option value="duckduckgo">DuckDuckGo</option>
+                    <option value="brave">Brave</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -574,43 +569,49 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">موقع المفضلة:</label>
-                <select class="form-control" id="bmPosSelect">
-                    <option value="bm-pos-top">أعلى المنتصف</option>
-                    <option value="bm-pos-center">المنتصف</option>
-                    <option value="bm-pos-bottom">أسفل الشاشة</option>
+                <label class="form-label">خلفية المظهر:</label>
+                <input type="file" class="form-control" id="bgInput" accept="image/*">
+                <button class="btn-secondary" onclick="resetBg()">إزالة الخلفية المخصصة</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">المظهر (Theme):</label>
+                <select class="form-control" id="themeSelect">
+                    <option value="dark">داكن (Dark)</option>
+                    <option value="light">مضيء (Light)</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label class="form-label">صيغة الوقت والتاريخ المخصصة:</label>
-                <input type="text" class="form-control" id="customPatternInput" placeholder="HH:mm:ss" style="direction: ltr; text-align: left;">
-                
-                <div class="pattern-guide">
-                    <div class="pattern-guide-title">دليل رموز صيغة الوقت:</div>
-                    <div class="pattern-grid">
-                        <div><code>HH</code> : ساعة (24)</div>
-                        <div><code>hh</code> : ساعة (12)</div>
-                        <div><code>mm</code> : دقائق</div>
-                        <div><code>ss</code> : ثواني</div>
-                        <div><code>A</code> : صباحاً/مساءً</div>
-                        <div><code>dd</code> : اليوم</div>
-                        <div><code>MM</code> : الشهر</div>
-                        <div><code>yyyy</code> : السنة</div>
-                    </div>
-                </div>
+                <label class="form-label">نظام الوقت:</label>
+                <select class="form-control" id="timeFormatSelect">
+                    <option value="12">12 ساعة (AM/PM)</option>
+                    <option value="24">24 ساعة</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label class="form-label">خلفية المظهر:</label>
-                <input type="file" class="form-control" id="bgInput" accept="image/*">
+                <label class="form-label">تنسيق الثواني:</label>
+                <select class="form-control" id="timeCustomFormat">
+                    <option value="default">إظهار الثواني</option>
+                    <option value="no-seconds">إخفاء الثواني</option>
+                </select>
             </div>
 
-            <button class="btn-primary" onclick="saveCustomPattern()">حفظ وإغلاق</button>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+            <div class="form-group">
+                <label class="form-label">النسخ الاحتياطي والإعدادات:</label>
+                <button class="btn-secondary" onclick="exportData()">تصدير الإعدادات والمفضلات (JSON)</button>
+                <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importData(event)">
+                <button class="btn-secondary" onclick="document.getElementById('importInput').click()">استيراد البيانات</button>
+            </div>
+
+            <button class="btn-primary" onclick="closeModal('settingsModal')">حفظ وإغلاق</button>
         </div>
     </div>
 
-    <!-- Modal Add Site -->
+    <!-- Add Site Modal -->
     <div class="modal-overlay" id="addSiteModal">
         <div class="modal-body">
             <div class="modal-header">
@@ -633,6 +634,7 @@
     </div>
 
     <script>
+        // --- Modal Controllers ---
         function openModal(id) {
             document.getElementById(id).classList.add('active');
         }
@@ -641,49 +643,34 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        // Custom Time Formatter
-        function formatClock(now, pattern) {
-            let hours24 = now.getHours();
-            let hours12 = hours24 % 12 || 12;
-            let minutes = String(now.getMinutes()).padStart(2, '0');
-            let seconds = String(now.getSeconds()).padStart(2, '0');
-            let ampm = hours24 >= 12 ? 'PM' : 'AM';
-            let day = String(now.getDate()).padStart(2, '0');
-            let month = String(now.getMonth() + 1).padStart(2, '0');
-            let year = now.getFullYear();
-
-            return pattern
-                .replace(/HH/g, String(hours24).padStart(2, '0'))
-                .replace(/hh/g, String(hours12).padStart(2, '0'))
-                .replace(/mm/g, minutes)
-                .replace(/ss/g, seconds)
-                .replace(/A/g, ampm)
-                .replace(/dd/g, day)
-                .replace(/MM/g, month)
-                .replace(/yyyy/g, year);
-        }
-
+        // --- Clock Logic ---
         const clockEl = document.getElementById('clock');
         function updateClock() {
             const now = new Date();
-            const pattern = localStorage.getItem('timePattern') || 'HH:mm:ss';
-            clockEl.innerText = formatClock(now, pattern);
+            const format = localStorage.getItem('timeFormat') || '12';
+            const customFormat = localStorage.getItem('timeCustomFormat') || 'default';
+
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            let ampm = '';
+
+            if (format === '12') {
+                ampm = hours >= 12 ? ' PM' : ' AM';
+                hours = hours % 12 || 12;
+            }
+            hours = String(hours).padStart(2, '0');
+
+            let timeString = customFormat === 'no-seconds' 
+                ? `${hours}:${minutes}${ampm}` 
+                : `${hours}:${minutes}:${seconds}${ampm}`;
+
+            clockEl.innerText = timeString;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        function saveCustomPattern() {
-            const val = document.getElementById('customPatternInput').value.trim();
-            if (val) {
-                localStorage.setItem('timePattern', val);
-            }
-            updateClock();
-            closeModal('settingsModal');
-        }
-
-        document.getElementById('customPatternInput').value = localStorage.getItem('timePattern') || 'HH:mm:ss';
-
-        // Settings Change Handlers
+        // --- Settings Event Handlers ---
         document.getElementById('clockPosSelect').addEventListener('change', (e) => {
             clockEl.className = 'focusable-element ' + e.target.value;
             localStorage.setItem('clockPos', e.target.value);
@@ -695,12 +682,34 @@
             localStorage.setItem('searchPos', e.target.value);
         });
 
-        const bookmarksContainer = document.getElementById('bookmarksContainer');
-        document.getElementById('bmPosSelect').addEventListener('change', (e) => {
-            bookmarksContainer.className = 'bookmarks-section focusable-element ' + e.target.value;
-            localStorage.setItem('bmPos', e.target.value);
+        document.getElementById('searchEngineSelect').addEventListener('change', (e) => {
+            localStorage.setItem('searchEngine', e.target.value);
         });
 
+        document.getElementById('themeSelect').addEventListener('change', (e) => {
+            setTheme(e.target.value);
+        });
+
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        document.getElementById('timeFormatSelect').addEventListener('change', (e) => {
+            localStorage.setItem('timeFormat', e.target.value);
+            updateClock();
+        });
+
+        document.getElementById('timeCustomFormat').addEventListener('change', (e) => {
+            localStorage.setItem('timeCustomFormat', e.target.value);
+            updateClock();
+        });
+
+        // Background Upload & Reset
         document.getElementById('bgInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -714,25 +723,32 @@
             }
         });
 
-        // Load Saved Positions & Background
+        function resetBg() {
+            localStorage.removeItem('customBg');
+            document.body.style.backgroundImage = '';
+        }
+
+        // Load Saved Settings
         const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
         const savedSearchPos = localStorage.getItem('searchPos') || 'search-pos-center';
-        const savedBmPos = localStorage.getItem('bmPos') || 'bm-pos-bottom';
+        const savedEngine = localStorage.getItem('searchEngine') || 'google';
+        const savedTheme = localStorage.getItem('theme') || 'dark';
 
         clockEl.className = 'focusable-element ' + savedClockPos;
         searchWrapper.className = 'search-wrapper ' + savedSearchPos;
-        bookmarksContainer.className = 'bookmarks-section focusable-element ' + savedBmPos;
-
         document.getElementById('clockPosSelect').value = savedClockPos;
         document.getElementById('searchPosSelect').value = savedSearchPos;
-        document.getElementById('bmPosSelect').value = savedBmPos;
+        document.getElementById('searchEngineSelect').value = savedEngine;
+        document.getElementById('themeSelect').value = savedTheme;
+        setTheme(savedTheme);
 
         const savedBg = localStorage.getItem('customBg');
         if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
 
-        // Search Focus & Suggestions
+        // Search & Suggestions Handling
         const searchInput = document.getElementById('searchInput');
         const suggestionsCard = document.getElementById('suggestionsCard');
+        let selectedIndex = -1;
 
         searchInput.addEventListener('focus', () => {
             document.body.classList.add('focus-mode');
@@ -752,8 +768,9 @@
                 return;
             }
 
-            suggestionsCard.innerHTML = suggestions.slice(0, 5).map(item => `
-                <div class="suggestion-item" onclick="executeSearch('${item[0]}')">
+            selectedIndex = -1;
+            suggestionsCard.innerHTML = suggestions.slice(0, 5).map((item, idx) => `
+                <div class="suggestion-item" data-index="${idx}" onclick="executeSearch('${item[0]}')">
                     <svg class="suggestion-icon" viewBox="0 0 24 24">
                         <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                     </svg>
@@ -772,31 +789,69 @@
                 return;
             }
 
-            if (currentScript) {
-                document.body.removeChild(currentScript);
-            }
+            if (currentScript) document.body.removeChild(currentScript);
 
             currentScript = document.createElement('script');
             currentScript.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}&jsonp=handleGoogleSuggestions`;
             document.body.appendChild(currentScript);
         });
 
+        // Keyboard Navigation in Suggestions
         searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') executeSearch(searchInput.value);
+            const items = suggestionsCard.querySelectorAll('.suggestion-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (items.length > 0) {
+                    selectedIndex = (selectedIndex + 1) % items.length;
+                    updateSelection(items);
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (items.length > 0) {
+                    selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+                    updateSelection(items);
+                }
+            } else if (e.key === 'Enter') {
+                if (selectedIndex > -1 && items[selectedIndex]) {
+                    executeSearch(items[selectedIndex].querySelector('span').innerText);
+                } else {
+                    executeSearch(searchInput.value);
+                }
+            }
         });
+
+        function updateSelection(items) {
+            items.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.classList.add('selected');
+                    searchInput.value = item.querySelector('span').innerText;
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
 
         function executeSearch(query) {
             if (!query.trim()) return;
             if (query.startsWith('http://') || query.startsWith('https://')) {
                 window.location.href = query;
+                return;
             } else if (query.includes('.') && !query.includes(' ')) {
                 window.location.href = 'https://' + query;
-            } else {
-                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                return;
             }
+
+            const engine = localStorage.getItem('searchEngine') || 'google';
+            let url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+
+            if (engine === 'bing') url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+            else if (engine === 'duckduckgo') url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+            else if (engine === 'brave') url = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
+
+            window.location.href = url;
         }
 
-        // Bookmarks Logic
+        // --- Bookmarks Logic ---
         const defaultBookmarks = [
             { name: 'Google', url: 'https://www.google.com' },
             { name: 'YouTube', url: 'https://www.youtube.com' },
@@ -809,16 +864,22 @@
         }
 
         function renderBookmarks() {
+            const container = document.getElementById('bookmarksContainer');
             const list = getBookmarks();
+
             let html = list.map((item, index) => {
                 let domain = '';
-                try { domain = new URL(item.url).hostname; } catch(e) { domain = item.url; }
+                try {
+                    domain = new URL(item.url).hostname;
+                } catch(e) {
+                    domain = item.url;
+                }
                 const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
 
                 return `
                     <div class="bookmark-card" onclick="window.location.href='${item.url}'">
                         <button class="bookmark-delete" onclick="event.stopPropagation(); deleteBookmark(${index});" title="حذف">&times;</button>
-                        <img class="bookmark-icon" src="${faviconUrl}" onerror="this.src='https://placehold.co/32x32/1a1d2d/ffffff?text=${item.name[0]}'" alt="${item.name}">
+                        <img class="bookmark-icon" src="${faviconUrl}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=1a1d2d&color=fff';" alt="${item.name}">
                         <span class="bookmark-title">${item.name}</span>
                     </div>
                 `;
@@ -833,7 +894,7 @@
                 </div>
             `;
 
-            bookmarksContainer.innerHTML = html;
+            container.innerHTML = html;
         }
 
         function handleAddSite() {
@@ -841,9 +902,7 @@
             let url = document.getElementById('siteUrlInput').value.trim();
 
             if (!name || !url) return;
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
-            }
+            if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
 
             const list = getBookmarks();
             list.push({ name, url });
@@ -851,6 +910,7 @@
 
             document.getElementById('siteNameInput').value = '';
             document.getElementById('siteUrlInput').value = '';
+
             closeModal('addSiteModal');
             renderBookmarks();
         }
@@ -860,6 +920,40 @@
             list.splice(index, 1);
             localStorage.setItem('userBookmarks', JSON.stringify(list));
             renderBookmarks();
+        }
+
+        // Data Export / Import
+        function exportData() {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                data[key] = localStorage.getItem(key);
+            }
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'startpage-backup.json';
+            a.click();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    Object.keys(data).forEach(key => {
+                        localStorage.setItem(key, data[key]);
+                    });
+                    location.reload();
+                } catch(err) {
+                    alert('ملف غير صالح!');
+                }
+            };
+            reader.readAsText(file);
         }
 
         renderBookmarks();
