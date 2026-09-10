@@ -97,38 +97,35 @@
             z-index: 1;
         }
 
+        /* زر الإعدادات معدل: يسار، بدون خلفية ثقيلة وبدون حد بارز */
         .settings-trigger {
             position: fixed;
-            top: 24px;
-            right: 24px;
-            width: 44px;
-            height: 44px;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
+            background: transparent;
+            border: none;
             color: var(--text-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 50;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             outline: none;
         }
 
         .settings-trigger:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
-            transform: rotate(45deg);
-            border-color: var(--border-highlight);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transform: rotate(30deg);
         }
 
         .settings-trigger svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             fill: currentColor;
         }
 
@@ -173,9 +170,9 @@
             text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .clock-top-left { top: 40px; left: 40px; transform: none; }
+        .clock-top-left { top: 40px; left: 80px; transform: none; }
         .clock-top-center { top: 40px; left: 50%; transform: translateX(-50%); }
-        .clock-top-right { top: 40px; right: 100px; transform: none; }
+        .clock-top-right { top: 40px; right: 40px; transform: none; }
 
         .search-wrapper {
             position: absolute;
@@ -588,7 +585,7 @@
                     <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
             </div>
-            <input type="text" class="search-input" id="searchInput" placeholder="ابحث أو أدخل رابطاً..." autocomplete="off">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search or type URL..." autocomplete="off">
         </div>
         <div class="suggestions-card" id="suggestionsCard"></div>
     </div>
@@ -640,8 +637,8 @@
                 <input type="text" class="form-control" id="dateFormatInput" placeholder="مثال: dddd, MMMM d, yyyy">
                 <div class="format-guide">
                     شرح رموزه:<br>
-                    <code>dd</code> : اليوم (01-31) | <code>dddd</code> : اسم اليوم (الإثنين...)<br>
-                    <code>MM</code> : رقم الشهر | <code>MMMM</code> : اسم الشهر (يناير...)<br>
+                    <code>dd</code> : اليوم (01-31) | <code>dddd</code> : اسم اليوم (Monday...)<br>
+                    <code>MM</code> : رقم الشهر | <code>MMMM</code> : اسم الشهر (January...)<br>
                     <code>yyyy</code> : السنة (2026)
                 </div>
             </div>
@@ -738,16 +735,16 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        // --- Custom Date & Time Formatter ---
+        // --- Custom Date & Time Formatter (ENGLISH) ---
         function formatDateTime(date, format) {
-            const daysFull = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-            const monthsFull = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            const daysFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const monthsFull = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
             let hours24 = date.getHours();
             let hours12 = hours24 % 12 || 12;
             let minutes = date.getMinutes();
             let seconds = date.getSeconds();
-            let tt = hours24 >= 12 ? 'مساءً' : 'صباحاً';
+            let tt = hours24 >= 12 ? 'PM' : 'AM';
 
             let dayNum = date.getDate();
             let monthNum = date.getMonth() + 1;
