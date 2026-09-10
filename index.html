@@ -4,239 +4,587 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Startpage</title>
+    <!-- Google Fonts Inter for ultra clean typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-color: #0d0e15;
+            --card-bg: rgba(22, 25, 38, 0.65);
+            --card-hover: rgba(35, 40, 60, 0.85);
+            --search-bg: rgba(26, 29, 45, 0.85);
+            --search-focus-bg: #161824;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.18);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-color: #6366f1;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
             height: 100vh;
-            background: #11111b center/cover no-repeat fixed;
-            color: #cdd6f4;
-            transition: background 0.3s ease;
-            position: relative;
+            width: 100vw;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0d0e15 70%);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: var(--text-primary);
             overflow: hidden;
+            position: relative;
+            transition: background-image 0.5s ease-in-out;
         }
 
-        /* زر الإعدادات */
-        .settings-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            z-index: 50;
-        }
-
-        /* نافذة الإعدادات */
-        .modal {
-            display: none;
-            position: fixed;
+        /* Ambient Glow Overlay */
+        .ambient-bg {
+            position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08), transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .settings-trigger {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 100;
-        }
-        .modal-content {
-            background: #1e1e2e;
-            padding: 20px;
-            border-radius: 12px;
-            width: 340px;
-            max-height: 90vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            border: 1px solid #313244;
-        }
-        .modal-content label { font-size: 0.85rem; }
-        .modal-content input, .modal-content select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 4px;
-            background: #313244;
-            border: 1px solid #45475a;
-            color: #fff;
-            border-radius: 6px;
-        }
-
-        /* الساعة */
-        #clock {
-            position: absolute;
-            font-size: 3.5rem;
-            font-weight: bold;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        /* مواضع الساعة */
-        .clock-top-left { top: 30px; left: 30px; transform: none; }
-        .clock-top-center { top: 30px; left: 50%; transform: translateX(-50%); }
-        .clock-top-right { top: 30px; right: 80px; transform: none; }
-        .clock-center { top: 40%; left: 50%; transform: translate(-50%, -50%); }
-
-        /* شريط البحث */
-        .search-container {
-            position: absolute;
-            width: 80%;
-            max-width: 500px;
-            transition: all 0.3s ease;
-        }
-
-        /* مواضع شريط البحث */
-        .search-top-center { top: 120px; left: 50%; transform: translateX(-50%); }
-        .search-center { top: 55%; left: 50%; transform: translate(-50%, -50%); }
-
-        .search-input {
-            width: 100%;
-            padding: 14px 20px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            color: #fff;
-            font-size: 1rem;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
         }
 
-        .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0; right: 0;
-            background: #1e1e2e;
-            border-radius: 12px;
-            margin-top: 5px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            z-index: 10;
+        .settings-trigger:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text-primary);
+            transform: rotate(45deg);
+            border-color: var(--border-highlight);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
-        .suggestion-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #313244;
-        }
-        .suggestion-item:hover { background: #313244; }
 
-        /* المواقع المفضلة */
-        .bookmarks {
+        .settings-trigger svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .focusable-element {
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.focus-mode .focusable-element {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: scale(0.96);
+            filter: blur(8px);
+        }
+
+        #clock {
             position: absolute;
-            bottom: 40px;
+            font-size: 4.5rem;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            color: #ffffff;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            z-index: 10;
+            user-select: none;
+            direction: ltr;
+        }
+
+        .clock-top-left { top: 40px; left: 40px; transform: none; }
+        .clock-top-center { top: 40px; left: 50%; transform: translateX(-50%); }
+        .clock-top-right { top: 40px; right: 100px; transform: none; }
+        .clock-center { top: 35%; left: 50%; transform: translate(-50%, -50%); }
+
+        .search-wrapper {
+            position: absolute;
+            width: 90%;
+            max-width: 620px;
+            z-index: 30;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-pos-top-center { top: 160px; left: 50%; transform: translateX(-50%); }
+        .search-pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        body.focus-mode .search-wrapper {
+            top: 38% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(1.03) !important;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            background: var(--search-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            padding: 6px 18px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            background: var(--search-focus-bg);
+            border-color: var(--border-highlight);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .search-icon-left {
+            width: 22px;
+            height: 22px;
+            fill: var(--text-secondary);
+            margin-left: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: fill 0.3s ease;
+        }
+
+        .search-box:focus-within .search-icon-left {
+            fill: var(--accent-color);
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            padding: 12px 0;
+            width: 100%;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .suggestions-card {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: var(--search-focus-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 40;
+        }
+
+        .suggestions-card.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+            gap: 14px;
+            color: var(--text-primary);
+            font-size: 0.98rem;
+        }
+
+        .suggestion-item:hover, .suggestion-item.selected {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .suggestion-icon {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .suggestion-item:hover .suggestion-icon {
+            fill: var(--text-primary);
+        }
+
+        .bookmarks-section {
+            position: absolute;
+            bottom: 60px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
             width: 90%;
-            max-width: 700px;
+            max-width: 720px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            z-index: 20;
         }
-        .bookmark-item {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            padding: 8px 14px;
-            border-radius: 10px;
-            color: #fff;
+
+        .bookmark-card {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .bookmark-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-highlight);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .bookmark-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .bookmark-title {
+            font-size: 0.78rem;
+            color: var(--text-primary);
+            width: 80%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+
+        .bookmark-add-btn {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .bookmark-add-btn:hover {
+            border-color: var(--accent-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .bookmark-add-icon {
+            width: 28px;
+            height: 28px;
+            fill: var(--text-secondary);
+            transition: fill 0.3s ease;
+        }
+
+        .bookmark-add-btn:hover .bookmark-add-icon {
+            fill: var(--accent-color);
+        }
+
+        .bookmark-delete {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .bookmark-card:hover .bookmark-delete {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-body {
+            background: #131522;
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 420px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.92) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-primary);
+        }
+
+        .modal-overlay.active .modal-body {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        select.form-control option {
+            background: #131522;
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
+    <div class="ambient-bg"></div>
 
-    <button class="settings-btn" onclick="toggleModal(true)">⚙️ الإعدادات</button>
+    <button class="settings-trigger focusable-element" onclick="openModal('settingsModal')" title="الإعدادات">
+        <svg viewBox="0 0 24 24">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+        </svg>
+    </button>
 
-    <!-- نافذة الإعدادات -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <h3>الإعدادات</h3>
-            
-            <label>موقع الساعة:
-                <select id="clockPosSelect">
+    <div id="clock" class="focusable-element clock-top-center">00:00:00</div>
+
+    <div class="search-wrapper search-pos-center" id="searchWrapper">
+        <div class="search-box">
+            <div class="search-icon-left">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+            <input type="text" class="search-input" id="searchInput" placeholder="ابحث في Google أو أدخل رابطاً..." autocomplete="off">
+        </div>
+        <!-- Live Suggestions Card -->
+        <div class="suggestions-card" id="suggestionsCard"></div>
+    </div>
+
+    <div class="bookmarks-section focusable-element" id="bookmarksContainer">
+        <!-- Bookmark cards rendered dynamically -->
+    </div>
+
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h3 class="modal-title">الإعدادات</h3>
+                <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">موقع الساعة:</label>
+                <select class="form-control" id="clockPosSelect">
                     <option value="clock-top-left">أعلى اليسار</option>
                     <option value="clock-top-center">أعلى الوسط</option>
                     <option value="clock-top-right">أعلى اليمين</option>
                     <option value="clock-center">في المنتصف</option>
                 </select>
-            </label>
+            </div>
 
-            <label>موقع شريط البحث:
-                <select id="searchPosSelect">
-                    <option value="search-top-center">أعلى المنتصف</option>
-                    <option value="search-center">في المنتصف</option>
+            <div class="form-group">
+                <label class="form-label">موقع شريط البحث:</label>
+                <select class="form-control" id="searchPosSelect">
+                    <option value="search-pos-top-center">أعلى المنتصف</option>
+                    <option value="search-pos-center">في المنتصف</option>
                 </select>
-            </label>
+            </div>
 
-            <label>خلفية الجهاز:
-                <input type="file" id="bgInput" accept="image/*">
-            </label>
+            <div class="form-group">
+                <label class="form-label">خلفية المظهر:</label>
+                <input type="file" class="form-control" id="bgInput" accept="image/*">
+            </div>
 
-            <label>نظام الساعة:
-                <select id="timeFormatSelect">
+            <div class="form-group">
+                <label class="form-label">نظام الوقت:</label>
+                <select class="form-control" id="timeFormatSelect">
                     <option value="12">12 ساعة (AM/PM)</option>
                     <option value="24">24 ساعة</option>
                 </select>
-            </label>
+            </div>
 
-            <label>تنسيق الوقت:
-                <select id="timeCustomFormat">
-                    <option value="default">الساعات : الدقائق : الثواني</option>
-                    <option value="no-seconds">الساعات : الدقائق فقط</option>
+            <div class="form-group">
+                <label class="form-label">تنسيق الثواني:</label>
+                <select class="form-control" id="timeCustomFormat">
+                    <option value="default">إظهار الثواني</option>
+                    <option value="no-seconds">إخفاء الثواني</option>
                 </select>
-            </label>
+            </div>
 
-            <label>إضافة موقع مفضل:
-                <input type="text" id="bmName" placeholder="الاسم">
-                <input type="url" id="bmUrl" placeholder="الرابط (https://...)">
-                <button onclick="addBookmark()" style="margin-top: 5px; padding: 6px;">إضافة</button>
-            </label>
-
-            <button onclick="toggleModal(false)" style="background: #f38ba8; color: #000; border: none; padding: 8px; border-radius: 6px; cursor: pointer; margin-top: 5px;">إغلاق</button>
+            <button class="btn-primary" onclick="closeModal('settingsModal')">حفظ وإغلاق</button>
         </div>
     </div>
 
-    <!-- العناصر الرئيسية -->
-    <div id="clock" class="clock-top-center">00:00:00</div>
+    <div class="modal-overlay" id="addSiteModal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h3 class="modal-title">إضافة موقع مفضل</h3>
+                <button class="modal-close" onclick="closeModal('addSiteModal')">&times;</button>
+            </div>
 
-    <div class="search-container search-center" id="searchContainer">
-        <input type="text" class="search-input" id="searchInput" placeholder="ابحث في Google..." autocomplete="off">
-        <div class="suggestions" id="suggestionsBox"></div>
+            <div class="form-group">
+                <label class="form-label">اسم الموقع:</label>
+                <input type="text" class="form-control" id="siteNameInput" placeholder="مثال: Google">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">الرابط (URL):</label>
+                <input type="url" class="form-control" id="siteUrlInput" placeholder="https://www.example.com">
+            </div>
+
+            <button class="btn-primary" onclick="handleAddSite()">إضافة الموقع</button>
+        </div>
     </div>
 
-    <div class="bookmarks" id="bookmarksContainer"></div>
-
     <script>
-        function toggleModal(show) {
-            document.getElementById('settingsModal').style.display = show ? 'flex' : 'none';
+        
+        // --- Modal Controllers ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
         }
 
-        // --- التحكم بموقع الساعة وشريط البحث ---
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // --- Clock Logic ---
         const clockEl = document.getElementById('clock');
-        const searchEl = document.getElementById('searchContainer');
-
-        document.getElementById('clockPosSelect').addEventListener('change', (e) => {
-            clockEl.className = e.target.value;
-            localStorage.setItem('clockPos', e.target.value);
-        });
-
-        document.getElementById('searchPosSelect').addEventListener('change', (e) => {
-            searchEl.className = 'search-container ' + e.target.value;
-            localStorage.setItem('searchPos', e.target.value);
-        });
-
-        // استعادة المواقع المحفوظة
-        const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
-        const savedSearchPos = localStorage.getItem('searchPos') || 'search-center';
-        clockEl.className = savedClockPos;
-        searchEl.className = 'search-container ' + savedSearchPos;
-        document.getElementById('clockPosSelect').value = savedClockPos;
-        document.getElementById('searchPosSelect').value = savedSearchPos;
-
-        // --- الساعة والتنسيق ---
         function updateClock() {
             const now = new Date();
             const format = localStorage.getItem('timeFormat') || '12';
@@ -253,26 +601,38 @@
             }
             hours = String(hours).padStart(2, '0');
 
-            let timeString = `${hours}:${minutes}:${seconds}${ampm}`;
-            if (customFormat === 'no-seconds') {
-                timeString = `${hours}:${minutes}${ampm}`;
-            }
+            let timeString = customFormat === 'no-seconds' 
+                ? `${hours}:${minutes}${ampm}` 
+                : `${hours}:${minutes}:${seconds}${ampm}`;
 
             clockEl.innerText = timeString;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
+        // --- Settings Event Handlers ---
+        document.getElementById('clockPosSelect').addEventListener('change', (e) => {
+            clockEl.className = 'focusable-element ' + e.target.value;
+            localStorage.setItem('clockPos', e.target.value);
+        });
+
+        const searchWrapper = document.getElementById('searchWrapper');
+        document.getElementById('searchPosSelect').addEventListener('change', (e) => {
+            searchWrapper.className = 'search-wrapper ' + e.target.value;
+            localStorage.setItem('searchPos', e.target.value);
+        });
+
         document.getElementById('timeFormatSelect').addEventListener('change', (e) => {
             localStorage.setItem('timeFormat', e.target.value);
             updateClock();
         });
+
         document.getElementById('timeCustomFormat').addEventListener('change', (e) => {
             localStorage.setItem('timeCustomFormat', e.target.value);
             updateClock();
         });
 
-        // --- الخلفية ---
+        // Background Upload Logic
         document.getElementById('bgInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -286,63 +646,163 @@
             }
         });
 
+        // Load Saved Settings
+        const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
+        const savedSearchPos = localStorage.getItem('searchPos') || 'search-pos-center';
+        clockEl.className = 'focusable-element ' + savedClockPos;
+        searchWrapper.className = 'search-wrapper ' + savedSearchPos;
+        document.getElementById('clockPosSelect').value = savedClockPos;
+        document.getElementById('searchPosSelect').value = savedSearchPos;
+
         const savedBg = localStorage.getItem('customBg');
         if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
 
-        // --- البحث والاقترحات ---
         const searchInput = document.getElementById('searchInput');
-        const suggestionsBox = document.getElementById('suggestionsBox');
+        const suggestionsCard = document.getElementById('suggestionsCard');
 
-        searchInput.addEventListener('input', async function() {
-            const query = this.value.trim();
-            if (!query) { suggestionsBox.innerHTML = ''; return; }
+        // Focus Mode Handling
+        searchInput.addEventListener('focus', () => {
+            document.body.classList.add('focus-mode');
+        });
 
-            try {
-                const res = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`);
-                const data = await res.json();
-                const suggestions = data[1];
-
-                suggestionsBox.innerHTML = suggestions.slice(0, 5).map(item => 
-                    `<div class="suggestion-item" onclick="submitSearch('${item}')">${item}</div>`
-                ).join('');
-            } catch (e) {
-                suggestionsBox.innerHTML = '';
+        // Exit Focus Mode when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchWrapper.contains(e.target)) {
+                document.body.classList.remove('focus-mode');
+                suggestionsCard.classList.remove('active');
             }
         });
 
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') submitSearch(this.value);
+        // Global JSONP Callback for Google Autocomplete
+        window.handleGoogleSuggestions = function(data) {
+            const suggestions = data[1] || [];
+            if (suggestions.length === 0 || !document.body.classList.contains('focus-mode')) {
+                suggestionsCard.classList.remove('active');
+                return;
+            }
+
+            suggestionsCard.innerHTML = suggestions.slice(0, 5).map(item => `
+                <div class="suggestion-item" onclick="executeSearch('${item[0]}')">
+                    <svg class="suggestion-icon" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <span>${item[0]}</span>
+                </div>
+            `).join('');
+
+            suggestionsCard.classList.add('active');
+        };
+
+        // Fetch Autocomplete via JSONP Script Injection
+        let currentScript = null;
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            if (!query) {
+                suggestionsCard.classList.remove('active');
+                return;
+            }
+
+            if (currentScript) {
+                document.body.removeChild(currentScript);
+            }
+
+            currentScript = document.createElement('script');
+            currentScript.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}&jsonp=handleGoogleSuggestions`;
+            document.body.appendChild(currentScript);
         });
 
-        function submitSearch(query) {
-            window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                executeSearch(searchInput.value);
+            }
+        });
+
+        function executeSearch(query) {
+            if (!query.trim()) return;
+            if (query.startsWith('http://') || query.startsWith('https://')) {
+                window.location.href = query;
+            } else if (query.includes('.') && !query.includes(' ')) {
+                window.location.href = 'https://' + query;
+            } else {
+                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
         }
 
-        // --- المواقع المفضلة ---
+        const defaultBookmarks = [
+            { name: 'Google', url: 'https://www.google.com' },
+            { name: 'YouTube', url: 'https://www.youtube.com' },
+            { name: 'GitHub', url: 'https://www.github.com' }
+        ];
+
         function getBookmarks() {
-            return JSON.parse(localStorage.getItem('bookmarks') || '[]');
+            const stored = localStorage.getItem('userBookmarks');
+            return stored ? JSON.parse(stored) : defaultBookmarks;
         }
 
         function renderBookmarks() {
             const container = document.getElementById('bookmarksContainer');
             const list = getBookmarks();
-            container.innerHTML = list.map(item => 
-                `<a href="${item.url}" class="bookmark-item">${item.name}</a>`
-            ).join('');
+
+            let html = list.map((item, index) => {
+                let domain = '';
+                try {
+                    domain = new URL(item.url).hostname;
+                } catch(e) {
+                    domain = item.url;
+                }
+                const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+
+                return `
+                    <div class="bookmark-card" onclick="window.location.href='${item.url}'">
+                        <button class="bookmark-delete" onclick="event.stopPropagation(); deleteBookmark(${index});" title="حذف">&times;</button>
+                        <img class="bookmark-icon" src="${faviconUrl}" onerror="this.src='https://placehold.co/32x32/1a1d2d/ffffff?text=${item.name[0]}'" alt="${item.name}">
+                        <span class="bookmark-title">${item.name}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Add Site Button
+            html += `
+                <div class="bookmark-card bookmark-add-btn" onclick="openModal('addSiteModal')">
+                    <svg class="bookmark-add-icon" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    <span class="bookmark-title" style="color: var(--text-secondary);">إضافة موقع</span>
+                </div>
+            `;
+
+            container.innerHTML = html;
         }
 
-        function addBookmark() {
-            const name = document.getElementById('bmName').value;
-            const url = document.getElementById('bmUrl').value;
-            if (name && url) {
-                const list = getBookmarks();
-                list.push({ name, url });
-                localStorage.setItem('bookmarks', JSON.stringify(list));
-                renderBookmarks();
-                document.getElementById('bmName').value = '';
-                document.getElementById('bmUrl').value = '';
+        function handleAddSite() {
+            const name = document.getElementById('siteNameInput').value.trim();
+            let url = document.getElementById('siteUrlInput').value.trim();
+
+            if (!name || !url) return;
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
             }
+
+            const list = getBookmarks();
+            list.push({ name, url });
+            localStorage.setItem('userBookmarks', JSON.stringify(list));
+
+            document.getElementById('siteNameInput').value = '';
+            document.getElementById('siteUrlInput').value = '';
+
+            closeModal('addSiteModal');
+            renderBookmarks();
         }
+
+        function deleteBookmark(index) {
+            const list = getBookmarks();
+            list.splice(index, 1);
+            localStorage.setItem('userBookmarks', JSON.stringify(list));
+            renderBookmarks();
+        }
+
+        // Initialize Bookmarks
         renderBookmarks();
     </script>
 </body>
