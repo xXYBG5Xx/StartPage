@@ -27,7 +27,6 @@
             --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
 
-            /* الأحجام الافتراضية للمفضلات (متوسط) */
             --bm-size: 96px;
             --bm-icon-size: 32px;
             --bm-font-size: 0.78rem;
@@ -46,7 +45,6 @@
             --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.08);
         }
 
-        /* أحجام بطاقات المفضلات */
         body.bm-small {
             --bm-size: 72px;
             --bm-icon-size: 24px;
@@ -150,14 +148,15 @@
 
         #clock {
             position: absolute;
-            font-size: 4.5rem;
+            font-size: 4rem;
             font-weight: 700;
-            letter-spacing: -1.5px;
+            letter-spacing: -1px;
             color: var(--text-primary);
             text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             z-index: 10;
             user-select: none;
-            direction: ltr;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .clock-top-left { top: 40px; left: 40px; transform: none; }
@@ -173,8 +172,8 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .search-pos-top-center { top: 160px; left: 50%; transform: translateX(-50%); }
-        .search-pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .search-pos-top-center { top: 180px; left: 50%; transform: translateX(-50%); }
+        .search-pos-center { top: 52%; left: 50%; transform: translate(-50%, -50%); }
 
         body.focus-mode .search-wrapper {
             top: 38% !important;
@@ -539,7 +538,7 @@
         </svg>
     </button>
 
-    <div id="clock" class="focusable-element clock-top-center">00:00:00</div>
+    <div id="clock" class="focusable-element clock-top-center">--:--:--</div>
 
     <div class="search-wrapper search-pos-center" id="searchWrapper">
         <div class="search-box">
@@ -550,7 +549,6 @@
             </div>
             <input type="text" class="search-input" id="searchInput" placeholder="ابحث أو أدخل رابطاً..." autocomplete="off">
         </div>
-        <!-- Live Suggestions Card -->
         <div class="suggestions-card" id="suggestionsCard"></div>
     </div>
 
@@ -620,6 +618,7 @@
                 <select class="form-control" id="timeFormatSelect">
                     <option value="12">12 ساعة (AM/PM)</option>
                     <option value="24">24 ساعة</option>
+                    <option value="words">الوقت بالحروف العربية</option>
                 </select>
             </div>
 
@@ -667,13 +666,26 @@
     </div>
 
     <script>
-        // --- Modal Controllers ---
+        // --- Modals ---
         function openModal(id) {
             document.getElementById(id).classList.add('active');
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
+        }
+
+        // --- Arabic Words Helper ---
+        function convertTimeToWords(h, m) {
+            const hoursArr = ["الثانية عشرة", "الواحدة", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة", "السابعة", "الثامنة", "التاسعة", "العاشرة", "الحادية عشرة"];
+            let hourText = hoursArr[h % 12];
+            
+            if (m === 0) return `الساعة ${hourText}`;
+            if (m === 15) return `الساعة ${hourText} والربع`;
+            if (m === 30) return `الساعة ${hourText} والنصف`;
+            if (m === 45) return `الساعة ${hoursArr[(h + 1) % 12]} إلا ربع`;
+            
+            return `الساعة ${hourText} و ${m} دقيقة`;
         }
 
         // --- Clock Logic ---
@@ -686,8 +698,13 @@
             let hours = now.getHours();
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
-            let ampm = '';
 
+            if (format === 'words') {
+                clockEl.innerText = convertTimeToWords(hours, now.getMinutes());
+                return;
+            }
+
+            let ampm = '';
             if (format === '12') {
                 ampm = hours >= 12 ? ' PM' : ' AM';
                 hours = hours % 12 || 12;
@@ -703,7 +720,7 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- Settings Event Handlers ---
+        // --- Event Listeners ---
         document.getElementById('clockPosSelect').addEventListener('change', (e) => {
             clockEl.className = 'focusable-element ' + e.target.value;
             localStorage.setItem('clockPos', e.target.value);
@@ -752,7 +769,7 @@
             updateClock();
         });
 
-        // Background Upload & Reset
+        // Background Upload
         document.getElementById('bgInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -771,12 +788,14 @@
             document.body.style.backgroundImage = '';
         }
 
-        // Load Saved Settings
+        // Load Settings
         const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
         const savedSearchPos = localStorage.getItem('searchPos') || 'search-pos-center';
         const savedEngine = localStorage.getItem('searchEngine') || 'google';
         const savedTheme = localStorage.getItem('theme') || 'dark';
         const savedBmSize = localStorage.getItem('bookmarkSize') || 'bm-medium';
+        const savedTimeFormat = localStorage.getItem('timeFormat') || '12';
+        const savedTimeCustomFormat = localStorage.getItem('timeCustomFormat') || 'default';
 
         clockEl.className = 'focusable-element ' + savedClockPos;
         searchWrapper.className = 'search-wrapper ' + savedSearchPos;
@@ -785,6 +804,8 @@
         document.getElementById('searchEngineSelect').value = savedEngine;
         document.getElementById('themeSelect').value = savedTheme;
         document.getElementById('bookmarkSizeSelect').value = savedBmSize;
+        document.getElementById('timeFormatSelect').value = savedTimeFormat;
+        document.getElementById('timeCustomFormat').value = savedTimeCustomFormat;
         
         setTheme(savedTheme);
         setBookmarkSize(savedBmSize);
@@ -792,7 +813,7 @@
         const savedBg = localStorage.getItem('customBg');
         if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
 
-        // Search & Suggestions Handling
+        // --- Search & Suggestions ---
         const searchInput = document.getElementById('searchInput');
         const suggestionsCard = document.getElementById('suggestionsCard');
         let selectedIndex = -1;
@@ -843,7 +864,6 @@
             document.body.appendChild(currentScript);
         });
 
-        // Keyboard Navigation in Suggestions
         searchInput.addEventListener('keydown', (e) => {
             const items = suggestionsCard.querySelectorAll('.suggestion-item');
             if (e.key === 'ArrowDown') {
@@ -889,11 +909,21 @@
             }
 
             const engine = localStorage.getItem('searchEngine') || 'google';
-            let url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            let url = '';
 
-            if (engine === 'bing') url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-            else if (engine === 'duckduckgo') url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-            else if (engine === 'brave') url = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
+            switch (engine) {
+                case 'bing':
+                    url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'duckduckgo':
+                    url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'brave':
+                    url = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                default:
+                    url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
 
             window.location.href = url;
         }
@@ -906,80 +936,71 @@
         ];
 
         function getBookmarks() {
-            const stored = localStorage.getItem('userBookmarks');
-            return stored ? JSON.parse(stored) : defaultBookmarks;
-        }
-
-        function saveBookmarks(list) {
-            localStorage.setItem('userBookmarks', JSON.stringify(list));
-            renderBookmarks();
+            const data = localStorage.getItem('bookmarks');
+            return data ? JSON.parse(data) : defaultBookmarks;
         }
 
         function renderBookmarks() {
             const container = document.getElementById('bookmarksContainer');
-            const list = getBookmarks();
+            const bookmarks = getBookmarks();
+            container.innerHTML = '';
 
-            let html = list.map((item, index) => {
-                let domain = '';
-                try {
-                    domain = new URL(item.url).hostname;
-                } catch(e) {
-                    domain = item.url;
-                }
-                const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+            bookmarks.forEach((bm, index) => {
+                const domain = new URL(bm.url).hostname;
+                const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
 
-                return `
-                    <div class="bookmark-card" onclick="window.location.href='${item.url}'">
-                        <button class="bookmark-delete" onclick="event.stopPropagation(); deleteBookmark(${index})">&times;</button>
-                        <img class="bookmark-icon" src="${faviconUrl}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>'">
-                        <span class="bookmark-title">${item.name}</span>
-                    </div>
+                const card = document.createElement('a');
+                card.className = 'bookmark-card';
+                card.href = bm.url;
+                card.innerHTML = `
+                    <button class="bookmark-delete" onclick="deleteBookmark(event, ${index})">&times;</button>
+                    <img class="bookmark-icon" src="${iconUrl}" alt="${bm.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>'">
+                    <span class="bookmark-title">${bm.name}</span>
                 `;
-            }).join('');
+                container.appendChild(card);
+            });
 
-            html += `
-                <div class="bookmark-card bookmark-add-btn" onclick="openModal('addSiteModal')">
-                    <svg class="bookmark-add-icon" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                    <span class="bookmark-title">إضافة</span>
-                </div>
+            const addBtn = document.createElement('div');
+            addBtn.className = 'bookmark-card bookmark-add-btn';
+            addBtn.onclick = () => openModal('addSiteModal');
+            addBtn.innerHTML = `
+                <svg class="bookmark-add-icon" viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                <span class="bookmark-title">إضافة</span>
             `;
-
-            container.innerHTML = html;
-        }
-
-        function deleteBookmark(index) {
-            const list = getBookmarks();
-            list.splice(index, 1);
-            saveBookmarks(list);
+            container.appendChild(addBtn);
         }
 
         function handleAddSite() {
-            const nameInput = document.getElementById('siteNameInput');
-            const urlInput = document.getElementById('siteUrlInput');
-
-            let name = nameInput.value.trim();
-            let url = urlInput.value.trim();
+            const name = document.getElementById('siteNameInput').value.trim();
+            let url = document.getElementById('siteUrlInput').value.trim();
 
             if (!name || !url) return;
-
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 url = 'https://' + url;
             }
 
-            const list = getBookmarks();
-            list.push({ name, url });
-            saveBookmarks(list);
+            const bookmarks = getBookmarks();
+            bookmarks.push({ name, url });
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
 
-            nameInput.value = '';
-            urlInput.value = '';
+            document.getElementById('siteNameInput').value = '';
+            document.getElementById('siteUrlInput').value = '';
             closeModal('addSiteModal');
+            renderBookmarks();
         }
 
-        renderBookmarks();
+        function deleteBookmark(event, index) {
+            event.preventDefault();
+            event.stopPropagation();
+            const bookmarks = getBookmarks();
+            bookmarks.splice(index, 1);
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            renderBookmarks();
+        }
 
-        // --- Export & Import Logic ---
+        // --- Backup & Restore ---
         function exportData() {
             const data = {
                 bookmarks: getBookmarks(),
@@ -988,38 +1009,43 @@
                     searchPos: localStorage.getItem('searchPos'),
                     searchEngine: localStorage.getItem('searchEngine'),
                     theme: localStorage.getItem('theme'),
+                    bookmarkSize: localStorage.getItem('bookmarkSize'),
                     timeFormat: localStorage.getItem('timeFormat'),
                     timeCustomFormat: localStorage.getItem('timeCustomFormat'),
-                    bookmarkSize: localStorage.getItem('bookmarkSize')
+                    customBg: localStorage.getItem('customBg')
                 }
             };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "startpage_backup.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'startpage-settings.json';
+            a.click();
         }
 
-        function importData(event) {
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function(event) {
                 try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.bookmarks) localStorage.setItem('userBookmarks', JSON.stringify(data.bookmarks));
+                    const data = JSON.parse(event.target.result);
+                    if (data.bookmarks) localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks));
                     if (data.settings) {
                         Object.keys(data.settings).forEach(key => {
-                            if (data.settings[key]) localStorage.setItem(key, data.settings[key]);
+                            if (data.settings[key] !== null) localStorage.setItem(key, data.settings[key]);
                         });
                     }
                     location.reload();
-                } catch(err) {
-                    alert('ملف غير صالـح!');
+                } catch (err) {
+                    alert('ملف JSON غير صالح!');
                 }
             };
-            reader.readAsText(event.target.files[0]);
+            reader.readAsText(file);
         }
+
+        renderBookmarks();
     </script>
 </body>
 </html>
