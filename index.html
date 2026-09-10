@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startpage</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            height: 100vh;
+            background: #11111b center/cover no-repeat fixed;
+            color: #cdd6f4;
+            transition: background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* زر الإعدادات */
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            z-index: 50;
+        }
+
+        /* نافذة الإعدادات */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: #1e1e2e;
+            padding: 20px;
+            border-radius: 12px;
+            width: 340px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid #313244;
+        }
+        .modal-content label { font-size: 0.85rem; }
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            background: #313244;
+            border: 1px solid #45475a;
+            color: #fff;
+            border-radius: 6px;
+        }
+
+        /* الساعة */
+        #clock {
+            position: absolute;
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        /* مواضع الساعة */
+        .clock-top-left { top: 30px; left: 30px; transform: none; }
+        .clock-top-center { top: 30px; left: 50%; transform: translateX(-50%); }
+        .clock-top-right { top: 30px; right: 80px; transform: none; }
+        .clock-center { top: 40%; left: 50%; transform: translate(-50%, -50%); }
+
+        /* شريط البحث */
+        .search-container {
+            position: absolute;
+            width: 80%;
+            max-width: 500px;
+            transition: all 0.3s ease;
+        }
+
+        /* مواضع شريط البحث */
+        .search-top-center { top: 120px; left: 50%; transform: translateX(-50%); }
+        .search-center { top: 55%; left: 50%; transform: translate(-50%, -50%); }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0; right: 0;
+            background: #1e1e2e;
+            border-radius: 12px;
+            margin-top: 5px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #313244;
+        }
+        .suggestion-item:hover { background: #313244; }
+
+        /* المواقع المفضلة */
+        .bookmarks {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 90%;
+            max-width: 700px;
+        }
+        .bookmark-item {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 8px 14px;
+            border-radius: 10px;
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="settings-btn" onclick="toggleModal(true)">⚙️ الإعدادات</button>
+
+    <!-- نافذة الإعدادات -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h3>الإعدادات</h3>
+            
+            <label>موقع الساعة:
+                <select id="clockPosSelect">
+                    <option value="clock-top-left">أعلى اليسار</option>
+                    <option value="clock-top-center">أعلى الوسط</option>
+                    <option value="clock-top-right">أعلى اليمين</option>
+                    <option value="clock-center">في المنتصف</option>
+                </select>
+            </label>
+
+            <label>موقع شريط البحث:
+                <select id="searchPosSelect">
+                    <option value="search-top-center">أعلى المنتصف</option>
+                    <option value="search-center">في المنتصف</option>
+                </select>
+            </label>
+
+            <label>خلفية الجهاز:
+                <input type="file" id="bgInput" accept="image/*">
+            </label>
+
+            <label>نظام الساعة:
+                <select id="timeFormatSelect">
+                    <option value="12">12 ساعة (AM/PM)</option>
+                    <option value="24">24 ساعة</option>
+                </select>
+            </label>
+
+            <label>تنسيق الوقت:
+                <select id="timeCustomFormat">
+                    <option value="default">الساعات : الدقائق : الثواني</option>
+                    <option value="no-seconds">الساعات : الدقائق فقط</option>
+                </select>
+            </label>
+
+            <label>إضافة موقع مفضل:
+                <input type="text" id="bmName" placeholder="الاسم">
+                <input type="url" id="bmUrl" placeholder="الرابط (https://...)">
+                <button onclick="addBookmark()" style="margin-top: 5px; padding: 6px;">إضافة</button>
+            </label>
+
+            <button onclick="toggleModal(false)" style="background: #f38ba8; color: #000; border: none; padding: 8px; border-radius: 6px; cursor: pointer; margin-top: 5px;">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- العناصر الرئيسية -->
+    <div id="clock" class="clock-top-center">00:00:00</div>
+
+    <div class="search-container search-center" id="searchContainer">
+        <input type="text" class="search-input" id="searchInput" placeholder="ابحث في Google..." autocomplete="off">
+        <div class="suggestions" id="suggestionsBox"></div>
+    </div>
+
+    <div class="bookmarks" id="bookmarksContainer"></div>
+
+    <script>
+        function toggleModal(show) {
+            document.getElementById('settingsModal').style.display = show ? 'flex' : 'none';
+        }
+
+        // --- التحكم بموقع الساعة وشريط البحث ---
+        const clockEl = document.getElementById('clock');
+        const searchEl = document.getElementById('searchContainer');
+
+        document.getElementById('clockPosSelect').addEventListener('change', (e) => {
+            clockEl.className = e.target.value;
+            localStorage.setItem('clockPos', e.target.value);
+        });
+
+        document.getElementById('searchPosSelect').addEventListener('change', (e) => {
+            searchEl.className = 'search-container ' + e.target.value;
+            localStorage.setItem('searchPos', e.target.value);
+        });
+
+        // استعادة المواقع المحفوظة
+        const savedClockPos = localStorage.getItem('clockPos') || 'clock-top-center';
+        const savedSearchPos = localStorage.getItem('searchPos') || 'search-center';
+        clockEl.className = savedClockPos;
+        searchEl.className = 'search-container ' + savedSearchPos;
+        document.getElementById('clockPosSelect').value = savedClockPos;
+        document.getElementById('searchPosSelect').value = savedSearchPos;
+
+        // --- الساعة والتنسيق ---
+        function updateClock() {
+            const now = new Date();
+            const format = localStorage.getItem('timeFormat') || '12';
+            const customFormat = localStorage.getItem('timeCustomFormat') || 'default';
+
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            let ampm = '';
+
+            if (format === '12') {
+                ampm = hours >= 12 ? ' PM' : ' AM';
+                hours = hours % 12 || 12;
+            }
+            hours = String(hours).padStart(2, '0');
+
+            let timeString = `${hours}:${minutes}:${seconds}${ampm}`;
+            if (customFormat === 'no-seconds') {
+                timeString = `${hours}:${minutes}${ampm}`;
+            }
+
+            clockEl.innerText = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        document.getElementById('timeFormatSelect').addEventListener('change', (e) => {
+            localStorage.setItem('timeFormat', e.target.value);
+            updateClock();
+        });
+        document.getElementById('timeCustomFormat').addEventListener('change', (e) => {
+            localStorage.setItem('timeCustomFormat', e.target.value);
+            updateClock();
+        });
+
+        // --- الخلفية ---
+        document.getElementById('bgInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const bgUrl = event.target.result;
+                    document.body.style.backgroundImage = `url('${bgUrl}')`;
+                    localStorage.setItem('customBg', bgUrl);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        const savedBg = localStorage.getItem('customBg');
+        if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
+
+        // --- البحث والاقترحات ---
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestionsBox');
+
+        searchInput.addEventListener('input', async function() {
+            const query = this.value.trim();
+            if (!query) { suggestionsBox.innerHTML = ''; return; }
+
+            try {
+                const res = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                const suggestions = data[1];
+
+                suggestionsBox.innerHTML = suggestions.slice(0, 5).map(item => 
+                    `<div class="suggestion-item" onclick="submitSearch('${item}')">${item}</div>`
+                ).join('');
+            } catch (e) {
+                suggestionsBox.innerHTML = '';
+            }
+        });
+
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitSearch(this.value);
+        });
+
+        function submitSearch(query) {
+            window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+
+        // --- المواقع المفضلة ---
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('bookmarks') || '[]');
+        }
+
+        function renderBookmarks() {
+            const container = document.getElementById('bookmarksContainer');
+            const list = getBookmarks();
+            container.innerHTML = list.map(item => 
+                `<a href="${item.url}" class="bookmark-item">${item.name}</a>`
+            ).join('');
+        }
+
+        function addBookmark() {
+            const name = document.getElementById('bmName').value;
+            const url = document.getElementById('bmUrl').value;
+            if (name && url) {
+                const list = getBookmarks();
+                list.push({ name, url });
+                localStorage.setItem('bookmarks', JSON.stringify(list));
+                renderBookmarks();
+                document.getElementById('bmName').value = '';
+                document.getElementById('bmUrl').value = '';
+            }
+        }
+        renderBookmarks();
+    </script>
+</body>
+</html>
