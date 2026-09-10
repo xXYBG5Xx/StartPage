@@ -864,6 +864,17 @@
             document.body.appendChild(currentScript);
         });
 
+        function updateSelection(items) {
+            items.forEach((item, idx) => {
+                if (idx === selectedIndex) {
+                    item.classList.add('selected');
+                    searchInput.value = item.querySelector('span').innerText;
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
         searchInput.addEventListener('keydown', (e) => {
             const items = suggestionsCard.querySelectorAll('.suggestion-item');
             if (e.key === 'ArrowDown') {
@@ -879,131 +890,133 @@
                     updateSelection(items);
                 }
             } else if (e.key === 'Enter') {
-                if (selectedIndex > -1 && items[selectedIndex]) {
-                    executeSearch(items[selectedIndex].querySelector('span').innerText);
-                } else {
-                    executeSearch(searchInput.value);
-                }
+                e.preventDefault();
+                executeSearch(searchInput.value.trim());
+            } else if (e.key === 'Escape') {
+                document.body.classList.remove('focus-mode');
+                suggestionsCard.classList.remove('active');
+                searchInput.blur();
             }
         });
 
-        function updateSelection(items) {
-            items.forEach((item, index) => {
-                if (index === selectedIndex) {
-                    item.classList.add('selected');
-                    searchInput.value = item.querySelector('span').innerText;
-                } else {
-                    item.classList.remove('selected');
-                }
-            });
-        }
-
         function executeSearch(query) {
-            if (!query.trim()) return;
-            if (query.startsWith('http://') || query.startsWith('https://')) {
-                window.location.href = query;
-                return;
-            } else if (query.includes('.') && !query.includes(' ')) {
-                window.location.href = 'https://' + query;
+            if (!query) return;
+
+            // Check if input is a direct URL
+            const urlPattern = /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,})(:\d+)?(\/.*)?$/i;
+            if (urlPattern.test(query)) {
+                let targetUrl = query;
+                if (!/^https?:\/\//i.test(query)) {
+                    targetUrl = 'https://' + query;
+                }
+                window.location.href = targetUrl;
                 return;
             }
 
             const engine = localStorage.getItem('searchEngine') || 'google';
-            let url = '';
+            let searchUrl = '';
 
             switch (engine) {
                 case 'bing':
-                    url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                    searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
                     break;
                 case 'duckduckgo':
-                    url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                    searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
                     break;
                 case 'brave':
-                    url = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
+                    searchUrl = `https://search.brave.com/search?q=${encodeURIComponent(query)}`;
                     break;
+                case 'google':
                 default:
-                    url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                    searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                    break;
             }
 
-            window.location.href = url;
+            window.location.href = searchUrl;
         }
 
         // --- Bookmarks Logic ---
         const defaultBookmarks = [
             { name: 'Google', url: 'https://www.google.com' },
             { name: 'YouTube', url: 'https://www.youtube.com' },
-            { name: 'GitHub', url: 'https://www.github.com' }
+            { name: 'GitHub', url: 'https://github.com' }
         ];
 
         function getBookmarks() {
-            const data = localStorage.getItem('bookmarks');
-            return data ? JSON.parse(data) : defaultBookmarks;
+            const stored = localStorage.getItem('bookmarks');
+            return stored ? JSON.parse(stored) : defaultBookmarks;
+        }
+
+        function saveBookmarks(bookmarks) {
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            renderBookmarks();
+        }
+
+        function getFaviconUrl(url) {
+            try {
+                const domain = new URL(url).hostname;
+                return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+            } catch (e) {
+                return '';
+            }
         }
 
         function renderBookmarks() {
             const container = document.getElementById('bookmarksContainer');
             const bookmarks = getBookmarks();
-            container.innerHTML = '';
 
-            bookmarks.forEach((bm, index) => {
-                const domain = new URL(bm.url).hostname;
-                const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-
-                const card = document.createElement('a');
-                card.className = 'bookmark-card';
-                card.href = bm.url;
-                card.innerHTML = `
-                    <button class="bookmark-delete" onclick="deleteBookmark(event, ${index})">&times;</button>
-                    <img class="bookmark-icon" src="${iconUrl}" alt="${bm.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>'">
+            let html = bookmarks.map((bm, index) => `
+                <div class="bookmark-card" onclick="window.location.href='${bm.url}'">
+                    <button class="bookmark-delete" onclick="deleteBookmark(event, ${index})" title="حذف">&times;</button>
+                    <img class="bookmark-icon" src="${getFaviconUrl(bm.url)}" alt="${bm.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2394a3b8\'><path d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z\'/></svg>'">
                     <span class="bookmark-title">${bm.name}</span>
-                `;
-                container.appendChild(card);
-            });
+                </div>
+            `).join('');
 
-            const addBtn = document.createElement('div');
-            addBtn.className = 'bookmark-card bookmark-add-btn';
-            addBtn.onclick = () => openModal('addSiteModal');
-            addBtn.innerHTML = `
-                <svg class="bookmark-add-icon" viewBox="0 0 24 24">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                </svg>
-                <span class="bookmark-title">إضافة</span>
+            html += `
+                <div class="bookmark-card bookmark-add-btn" onclick="openModal('addSiteModal')">
+                    <svg class="bookmark-add-icon" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    <span class="bookmark-title">إضافة</span>
+                </div>
             `;
-            container.appendChild(addBtn);
+
+            container.innerHTML = html;
         }
 
         function handleAddSite() {
-            const name = document.getElementById('siteNameInput').value.trim();
-            let url = document.getElementById('siteUrlInput').value.trim();
+            const nameInput = document.getElementById('siteNameInput');
+            const urlInput = document.getElementById('siteUrlInput');
+
+            const name = nameInput.value.trim();
+            let url = urlInput.value.trim();
 
             if (!name || !url) return;
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+
+            if (!/^https?:\/\//i.test(url)) {
                 url = 'https://' + url;
             }
 
             const bookmarks = getBookmarks();
             bookmarks.push({ name, url });
-            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            saveBookmarks(bookmarks);
 
-            document.getElementById('siteNameInput').value = '';
-            document.getElementById('siteUrlInput').value = '';
+            nameInput.value = '';
+            urlInput.value = '';
             closeModal('addSiteModal');
-            renderBookmarks();
         }
 
         function deleteBookmark(event, index) {
-            event.preventDefault();
             event.stopPropagation();
             const bookmarks = getBookmarks();
             bookmarks.splice(index, 1);
-            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-            renderBookmarks();
+            saveBookmarks(bookmarks);
         }
 
-        // --- Backup & Restore ---
+        // --- Export / Import Config ---
         function exportData() {
             const data = {
-                bookmarks: getBookmarks(),
                 settings: {
                     clockPos: localStorage.getItem('clockPos'),
                     searchPos: localStorage.getItem('searchPos'),
@@ -1013,38 +1026,44 @@
                     timeFormat: localStorage.getItem('timeFormat'),
                     timeCustomFormat: localStorage.getItem('timeCustomFormat'),
                     customBg: localStorage.getItem('customBg')
-                }
+                },
+                bookmarks: getBookmarks()
             };
 
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'startpage-settings.json';
+            a.download = 'startpage-backup.json';
             a.click();
         }
 
-        function importData(e) {
-            const file = e.target.files[0];
+        function importData(event) {
+            const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function(e) {
                 try {
-                    const data = JSON.parse(event.target.result);
-                    if (data.bookmarks) localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks));
+                    const data = JSON.parse(e.target.result);
                     if (data.settings) {
                         Object.keys(data.settings).forEach(key => {
-                            if (data.settings[key] !== null) localStorage.setItem(key, data.settings[key]);
+                            if (data.settings[key] !== null) {
+                                localStorage.setItem(key, data.settings[key]);
+                            }
                         });
+                    }
+                    if (data.bookmarks) {
+                        localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks));
                     }
                     location.reload();
                 } catch (err) {
-                    alert('ملف JSON غير صالح!');
+                    alert('ملف غير صالـح!');
                 }
             };
             reader.readAsText(file);
         }
 
+        // Initial Render
         renderBookmarks();
     </script>
 </body>
